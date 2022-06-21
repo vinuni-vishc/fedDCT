@@ -1,2 +1,2 @@
 # fedDCT
-FedDCT: A Novel Federated Learning Approach for Training Large Convolutional Neural Networks
+We will commit this code on 22/6/2022. Thank you for being patient
