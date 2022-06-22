@@ -1,7 +1,7 @@
 import os 
 # Home directory
  
-HOME = "/home/ubuntu/quan.nm/feddct"
+HOME = "/home/ubuntu/quan.nm/feddct/fedDCT"
 # data directory 
 data_dir=HOME
 # Name of experiment
