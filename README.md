@@ -30,7 +30,7 @@ To prepare CIFAR10 and CIFAR100 for training, you can just run the training scri
 The statistics of real federated datasets are summarized as follows.
 <center>
 
-| Dataset       | Devices         | Training Samples|Num classes <br> mean (stdev) |
+| Dataset       | Devices         | Training Samples|Num classes <br> |
 | ------------- |-------------| -----| ---|
 | CIFAR10      | 20 | 50000 | 10| 
 | CIFAR100     | 20      |   50000 |100|
