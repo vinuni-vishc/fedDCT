@@ -4,16 +4,19 @@ This repository contains the code and experiments for the paper:
 
 > [FedDCT: A Novel Federated Learning Approach
 for Training Large Convolutional Neural Networks
-on Resource-constrained Devices]()
+on Resource-constrained Devices](https://arxiv.org/abs/2211.10948)
 >
-> submitted to [ IEEE Journal of Selected Topics in Signal Processing](https://signalprocessingsociety.org/publications-resources/ieee-journal-selected-topics-signal-processing)
+> submitted to [ IEEE Transactions on Network and Service Management]([https://signalprocessingsociety.org/publications-resources/ieee-journal-selected-topics-signal-processing](https://www.comsoc.org/publications/journals/ieee-tnsm)) Arxiv link: https://arxiv.org/abs/2211.10948
 
-We propose FedDCT, a novel distributed learning paradigm that enables FL of large CNNs on resource-limited edge devices. Rather than training the entire large model on each client, following the divide-and-conquer strategy, FedDCT divides a single, large CNN network into several parallel partitions and co-trains it on multiple clients simultaneously. This strategy reduces the memory requirements and allows low-end devices to participate in the FL process.
+We propose FedDCT, a novel approach that reduces the memory requirements of training in the FL setting. FedDCT allows lightweight edge devices to overcome resource constraints and participate in the FL task to train large CNN models. To the best of our knowledge, this is the first work that enables the training of large deep learning networks in edge computing devices in FL settings. The proposed FedDCT architecture can divide large CNN networks into sub-networks and co-training them with local clients in parallel. This co-training process allows clients from the same cluster to learn representations from each other. The server takes a weighted average of all the ensemble models trained by all the clusters to improve the learning performance of the global model.
 
-We empirically conduct extensive experiments on standardized datasets, including CIFAR-10, CIFAR-100, and two real-world medical datasets HAM10000 and VAIPE. Experimental results show that FedDCT outperforms a set of current state-of-the-art FL methods with interesting convergence behaviors. Furthermore, compared to other state-of-the-art approaches, FedDCT achieves higher accuracy and substantially reduces the number of communication rounds (with 4-8 times fewer memory requirements) to achieve the desired accuracy on the testing dataset without incurring any extra cost on the server-side.
+We conduct extensive experiments on natural and real-world medical image datasets. FedDCT significantly outperforms a set of the latest state-of-the-art FL methods and sets new state-of-the-art results on these datasets.
 
-![](images/fedavgvsfeddct.png)
-*Illustration of a typical FL architecture (left) and our proposed co-training perspective (right).*
+
+![](images/fedavgvsfeddctfinal.png)
+*Illustration of a typical FL architecture (left) and the proposed FedDCT (right). FedDCT enables a cluster of clients to cooperatively train a big deep learning model by breaking it into an ensemble of several small sub-models and training these sub-models on several devices concurrently, while maintaining client data privacy. We refer to this algorithm as Federated Divide and Co-training or FedDCT in short.*
+![](images/feddct_quan.png)
+*Federated Co-training of an ensemble model across S clients in a cluster of FedDCT*
 ## General Guidelines
 
 We provide this codebase which contains:
