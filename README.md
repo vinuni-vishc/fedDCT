@@ -13,7 +13,7 @@ We propose FedDCT, a novel approach that reduces the memory requirements of trai
 We conduct extensive experiments on natural and real-world medical image datasets. FedDCT significantly outperforms a set of the latest state-of-the-art FL methods and sets new state-of-the-art results on these datasets.
 
 
-![](images/fedavgvsfeddctfinal.png)
+![](images/feddctvsfedavgfinal.png)
 *Illustration of a typical FL architecture (left) and the proposed FedDCT (right). FedDCT enables a cluster of clients to cooperatively train a big deep learning model by breaking it into an ensemble of several small sub-models and training these sub-models on several devices concurrently, while maintaining client data privacy. We refer to this algorithm as Federated Divide and Co-training or FedDCT in short.*
 
 ![](images/feddct_quan.png)
