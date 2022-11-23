@@ -6,7 +6,8 @@ This repository contains the code and experiments for the paper:
 for Training Large Convolutional Neural Networks
 on Resource-constrained Devices](https://arxiv.org/abs/2211.10948)
 >
-> submitted to [ IEEE Transactions on Network and Service Management]([https://signalprocessingsociety.org/publications-resources/ieee-journal-selected-topics-signal-processing](https://www.comsoc.org/publications/journals/ieee-tnsm)) Arxiv link: https://arxiv.org/abs/2211.10948
+> submitted to [ IEEE Transactions on Network and Service Management]([https://signalprocessingsociety.org/publications-resources/ieee-journal-selected-topics-signal-processing](https://www.comsoc.org/publications/journals/ieee-tnsm) .
+> Arxiv link: https://arxiv.org/abs/2211.10948
 
 We propose FedDCT, a novel approach that reduces the memory requirements of training in the FL setting. FedDCT allows lightweight edge devices to overcome resource constraints and participate in the FL task to train large CNN models. To the best of our knowledge, this is the first work that enables the training of large deep learning networks in edge computing devices in FL settings. The proposed FedDCT architecture can divide large CNN networks into sub-networks and co-training them with local clients in parallel. This co-training process allows clients from the same cluster to learn representations from each other. The server takes a weighted average of all the ensemble models trained by all the clusters to improve the learning performance of the global model.
 
@@ -29,7 +30,7 @@ We provide this codebase which contains:
 ## Preparations
 ### Dataset generation
 
-To prepare CIFAR10 and CIFAR100 for training, you can just run the training script to allow for self downloading. For other datasets, please download to respective folder (i.e., download [HAM10000](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000) dataset to `dataset/ham10000` and unzip. )
+To prepare CIFAR10 and CIFAR100 for training, you can just run the training script to allow for self downloading. For other datasets, please download to respective folder (i.e., download [HAM10000](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000) dataset to `dataset/ham10000` and unzip. ). Use `dump_pickle_ham10000.py` to generate train-test set. Alternatively, download from [here](https://drive.google.com/drive/folders/1k1h9YTaNcfH8UM8GBZ8hzN17LDvLTYcI?usp=sharing) for pre-generated train-test split. For pill dataset, download [here](https://drive.google.com/drive/folders/1k1h9YTaNcfH8UM8GBZ8hzN17LDvLTYcI?usp=sharing).
 
 The statistics of real federated datasets are summarized as follows.
 <center>
