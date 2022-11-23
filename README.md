@@ -15,6 +15,7 @@ We conduct extensive experiments on natural and real-world medical image dataset
 
 ![](images/fedavgvsfeddctfinal.png)
 *Illustration of a typical FL architecture (left) and the proposed FedDCT (right). FedDCT enables a cluster of clients to cooperatively train a big deep learning model by breaking it into an ensemble of several small sub-models and training these sub-models on several devices concurrently, while maintaining client data privacy. We refer to this algorithm as Federated Divide and Co-training or FedDCT in short.*
+
 ![](images/feddct_quan.png)
 *Federated Co-training of an ensemble model across S clients in a cluster of FedDCT*
 ## General Guidelines
