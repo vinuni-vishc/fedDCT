@@ -325,7 +325,8 @@ def main_worker(gpu, ngpus_per_node, args):
                                                           num_workers=args.workers,
                                                           is_fed=args.is_fed,
                                                           num_clusters=args.num_clusters,
-                                                          cifar10_non_iid = args.cifar10_non_iid)
+                                                          cifar10_non_iid = args.cifar10_non_iid,
+                                                          cifar100_non_iid= args.cifar100_non_iid)
     #print("arg is "+str(args.cifar10_non_iid))
     val_loader = factory.get_data_loader(args.data,
                                          batch_size=args.eval_batch_size,
@@ -333,7 +334,8 @@ def main_worker(gpu, ngpus_per_node, args):
                                          dataset=args.dataset,
                                          split="val",
                                          num_workers=args.workers,
-                                         cifar10_non_iid = args.cifar10_non_iid)
+                                         cifar10_non_iid = args.cifar10_non_iid,
+                                         cifar100_non_iid= args.cifar100_non_iid)
 
     print(train_loader)
     # learning rate scheduler

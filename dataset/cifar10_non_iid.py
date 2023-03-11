@@ -291,7 +291,7 @@ def get_data_loaders_train(nclients,batch_size,classes_pc=10 ,verbose=True,trans
   print('Non diid is '+ str(non_iid))
   if non_iid == 'quantity_skew':
     split = split_image_data_realwd(x_train, y_train, 
-          n_clients=20, verbose=verbose)
+          n_clients=nclients, verbose=verbose)
   elif non_iid == 'label_skew':
     split = split_image_data(x_train, y_train, n_clients=nclients, 
           classes_per_client=classes_pc, verbose=verbose)

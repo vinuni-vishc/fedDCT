@@ -19,6 +19,7 @@ from .autoaugment import ImageNetPolicy, CIFAR10Policy, SVHNPolicy
 from .pill_dataset_base import PillDataBase
 from .pill_dataset_large import PillDataLarge
 from .cifar10_non_iid import *
+from .cifar100_non_iid import *
 __all__ = ['get_data_loader']
 
 
@@ -37,7 +38,8 @@ def get_data_loader(data_dir,
 						pin_memory=True,
 						is_fed=False,
 						num_clusters=20,
-						cifar10_non_iid=False):
+						cifar10_non_iid=False,
+						cifar100_non_iid = False):
 	"""get the dataset loader"""
 	assert not (is_autoaugment and randaa is not None)
 
@@ -84,43 +86,43 @@ def get_data_loader(data_dir,
 				val_loader = get_data_loaders_test( nclients= num_clusters*split_factor,
 				batch_size=batch_size,verbose=True, transforms_eval=val_transform,non_iid = non_iid,split_factor=1)
 				return val_loader 
-		elif (cifar10_non_iid == 'label_skew'):
-			non_iid = 'label_skew'
-			if 'train' in split:
-				print("INFO:PyTorch: Using label_skew CIFAR10 dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
-				traindir = os.path.join(data_dir, 'train')
-				train_transform = transforms.Compose([transforms.ToPILImage(),
-														transforms.RandomCrop(32, padding=4),
-														transforms.RandomHorizontalFlip(),
-														CIFAR10Policy(),
-														transforms.ToTensor(),
-														transforms.Normalize((0.4914, 0.4822, 0.4465),
-														(0.2023, 0.1994, 0.2010)),
-														transforms.RandomErasing(p=erase_p,
-														scale=(0.125, 0.2),
-														ratio=(0.99, 1.0),
-														value=0, inplace=False),
-				])
-				train_sampler = None
-				print('INFO:PyTorch: creating label_skew CIFAR10 train dataloader...')
-				non_iid = 'label_skew'
-				if is_fed:
-					train_loader = get_data_loaders_train(classes_pc=2, nclients= num_clusters*split_factor,
-					batch_size=batch_size,verbose=True, transforms_train=train_transform,non_iid = non_iid,split_factor=split_factor)
-				else:
-					assert is_fed
-				return train_loader, train_sampler
-			else:
-				valdir = os.path.join(data_dir, 'val')
-				val_transform = transforms.Compose([
-					transforms.ToPILImage(),
-					transforms.ToTensor(),
-					transforms.Normalize((0.4914, 0.4822, 0.4465),
-					(0.2023, 0.1994, 0.2010)),
-					])
-				val_loader = get_data_loaders_test( nclients= num_clusters*split_factor,
-				batch_size=batch_size,verbose=True, transforms_eval=val_transform,non_iid = non_iid,split_factor=1)
-				return val_loader 
+		# elif (cifar10_non_iid == 'label_skew'):
+		# 	non_iid = 'label_skew'
+		# 	if 'train' in split:
+		# 		print("INFO:PyTorch: Using label_skew CIFAR10 dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
+		# 		traindir = os.path.join(data_dir, 'train')
+		# 		train_transform = transforms.Compose([transforms.ToPILImage(),
+		# 												transforms.RandomCrop(32, padding=4),
+		# 												transforms.RandomHorizontalFlip(),
+		# 												CIFAR10Policy(),
+		# 												transforms.ToTensor(),
+		# 												transforms.Normalize((0.4914, 0.4822, 0.4465),
+		# 												(0.2023, 0.1994, 0.2010)),
+		# 												transforms.RandomErasing(p=erase_p,
+		# 												scale=(0.125, 0.2),
+		# 												ratio=(0.99, 1.0),
+		# 												value=0, inplace=False),
+		# 		])
+		# 		train_sampler = None
+		# 		print('INFO:PyTorch: creating label_skew CIFAR10 train dataloader...')
+		# 		non_iid = 'label_skew'
+		# 		if is_fed:
+		# 			train_loader = get_data_loaders_train(classes_pc=2, nclients= num_clusters*split_factor,
+		# 			batch_size=batch_size,verbose=True, transforms_train=train_transform,non_iid = non_iid,split_factor=split_factor)
+		# 		else:
+		# 			assert is_fed
+		# 		return train_loader, train_sampler
+		# 	else:
+		# 		valdir = os.path.join(data_dir, 'val')
+		# 		val_transform = transforms.Compose([
+		# 			transforms.ToPILImage(),
+		# 			transforms.ToTensor(),
+		# 			transforms.Normalize((0.4914, 0.4822, 0.4465),
+		# 			(0.2023, 0.1994, 0.2010)),
+		# 			])
+		# 		val_loader = get_data_loaders_test( nclients= num_clusters*split_factor,
+		# 		batch_size=batch_size,verbose=True, transforms_eval=val_transform,non_iid = non_iid,split_factor=1)
+		# 		return val_loader 
 		else:
 			if 'train' in split:
 				print("INFO:PyTorch: Using CIFAR10 dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
@@ -191,77 +193,115 @@ def get_data_loader(data_dir,
 	
 	elif dataset == 'cifar100':
 		"""cifar100 dataset"""
+		if (cifar100_non_iid == 'quantity_skew'):
+			non_iid = 'quantity_skew'
+			if 'train' in split:
+				print("INFO:PyTorch: Using quantity_skew CIFAR100 dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
+				traindir = os.path.join(data_dir, 'train')
+				train_transform = transforms.Compose([transforms.ToPILImage(),
+														transforms.RandomCrop(32, padding=4),
+														transforms.RandomHorizontalFlip(),
+														CIFAR10Policy(),
+														transforms.ToTensor(),
+														transforms.Normalize((0.4914, 0.4822, 0.4465),
+														(0.2023, 0.1994, 0.2010)),
+														transforms.RandomErasing(p=erase_p,
+														scale=(0.125, 0.2),
+														ratio=(0.99, 1.0),
+														value=0, inplace=False),
+				])
+				train_sampler = None
+				print('INFO:PyTorch: creating quantity_skew CIFAR10 train dataloader...')
+				
+				#print("Hey" + non_iid)
+				if is_fed:
+					train_loader = get_data_loaders_train_cf100( nclients= num_clusters*split_factor,
+					batch_size=batch_size,verbose=True, transforms_train=train_transform,non_iid = non_iid,split_factor=split_factor)
+				else:
+					assert is_fed
+				return train_loader, train_sampler
+			else:
+				valdir = os.path.join(data_dir, 'val')
+				val_transform = transforms.Compose([
+					transforms.ToPILImage(),
+					transforms.ToTensor(),
+					transforms.Normalize((0.4914, 0.4822, 0.4465),
+					(0.2023, 0.1994, 0.2010)),
+					])
+				val_loader = get_data_loaders_test_cf100( nclients= num_clusters*split_factor,
+				batch_size=batch_size,verbose=True, transforms_eval=val_transform,non_iid = non_iid,split_factor=1)
+				return val_loader 
+		else:
+			if 'train' in split:
+				print("INFO:PyTorch: Using CIFAR100 dataset, batch size {}"
+						" and crop size is {}.".format(batch_size, crop_size))
+				traindir = os.path.join(data_dir, 'train')
 		
-		if 'train' in split:
-			print("INFO:PyTorch: Using CIFAR100 dataset, batch size {}"
-					" and crop size is {}.".format(batch_size, crop_size))
-			traindir = os.path.join(data_dir, 'train')
-	
-			train_transform = transforms.Compose([transforms.RandomCrop(32, padding=4),
-													transforms.RandomHorizontalFlip(),
-													])
-			if is_autoaugment:
-				# the policy is the same as CIFAR10
-				train_transform.transforms.append(CIFAR10Policy())
-			train_transform.transforms.append(transforms.ToTensor())
-			train_transform.transforms.append(transforms.Normalize((0.5071, 0.4865, 0.4409),
-																	std=(0.2673, 0.2564, 0.2762)))
-			
-			if is_cutout:
-				# use random erasing to mimic cutout
-				train_transform.transforms.append(transforms.RandomErasing(p=erase_p,
-																			scale=(0.0625, 0.1),
-																			ratio=(0.99, 1.0),
-																			value=0, inplace=False))
-			train_dataset = CIFAR100(traindir, train=True,
-										transform=train_transform,
-										target_transform=None,
-										download=True,
-										split_factor=split_factor)
-			train_sampler = None
-			if is_distributed:
-				train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, shuffle=True)
+				train_transform = transforms.Compose([transforms.RandomCrop(32, padding=4),
+														transforms.RandomHorizontalFlip(),
+														])
+				if is_autoaugment:
+					# the policy is the same as CIFAR10
+					train_transform.transforms.append(CIFAR10Policy())
+				train_transform.transforms.append(transforms.ToTensor())
+				train_transform.transforms.append(transforms.Normalize((0.5071, 0.4865, 0.4409),
+																		std=(0.2673, 0.2564, 0.2762)))
+				
+				if is_cutout:
+					# use random erasing to mimic cutout
+					train_transform.transforms.append(transforms.RandomErasing(p=erase_p,
+																				scale=(0.0625, 0.1),
+																				ratio=(0.99, 1.0),
+																				value=0, inplace=False))
+				train_dataset = CIFAR100(traindir, train=True,
+											transform=train_transform,
+											target_transform=None,
+											download=True,
+											split_factor=split_factor)
+				train_sampler = None
+				if is_distributed:
+					train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, shuffle=True)
 
-			print('INFO:PyTorch: creating CIFAR100 train dataloader...')
-			if is_fed:
-				images_per_client = int(train_dataset.data.shape[0] / num_clusters/split_factor) 
-				print("Images per client is "+ str(images_per_client))
-				data_split = [images_per_client for _ in range(num_clusters*split_factor-1)]
-					
-				data_split.append(len(train_dataset)-images_per_client*(num_clusters*split_factor-1))
-					
-				traindata_split = torch.utils.data.random_split(train_dataset,data_split,generator=torch.Generator().manual_seed(68))
-				train_loader = [torch.utils.data.DataLoader(x,
+				print('INFO:PyTorch: creating CIFAR100 train dataloader...')
+				if is_fed:
+					images_per_client = int(train_dataset.data.shape[0] / num_clusters/split_factor) 
+					print("Images per client is "+ str(images_per_client))
+					data_split = [images_per_client for _ in range(num_clusters*split_factor-1)]
+						
+					data_split.append(len(train_dataset)-images_per_client*(num_clusters*split_factor-1))
+						
+					traindata_split = torch.utils.data.random_split(train_dataset,data_split,generator=torch.Generator().manual_seed(68))
+					train_loader = [torch.utils.data.DataLoader(x,
+																batch_size=batch_size,
+																shuffle=(train_sampler is None),
+																drop_last=True,
+																sampler=train_sampler,
+																**kwargs) for x in traindata_split]
+				else:
+					train_loader = torch.utils.data.DataLoader(train_dataset,
 															batch_size=batch_size,
 															shuffle=(train_sampler is None),
 															drop_last=True,
 															sampler=train_sampler,
-															**kwargs) for x in traindata_split]
+															**kwargs)
+				return train_loader, train_sampler
 			else:
-				train_loader = torch.utils.data.DataLoader(train_dataset,
-														batch_size=batch_size,
-														shuffle=(train_sampler is None),
-														drop_last=True,
-														sampler=train_sampler,
-														**kwargs)
-			return train_loader, train_sampler
-		else:
-			valdir = os.path.join(data_dir, 'val')
-			val_transform = transforms.Compose([transforms.ToTensor(),
-												transforms.Normalize((0.5071, 0.4865, 0.4409),
-																		std=(0.2673, 0.2564, 0.2762)),
-												])
-			val_dataset = CIFAR100(valdir, train=False,
-									transform=val_transform,
-									target_transform=None,
-									download=True,
-									split_factor=1)
-			print('INFO:PyTorch: creating CIFAR100 validation dataloader...')
-			val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, **kwargs)
-			return val_loader
+				valdir = os.path.join(data_dir, 'val')
+				val_transform = transforms.Compose([transforms.ToTensor(),
+													transforms.Normalize((0.5071, 0.4865, 0.4409),
+																			std=(0.2673, 0.2564, 0.2762)),
+													])
+				val_dataset = CIFAR100(valdir, train=False,
+										transform=val_transform,
+										target_transform=None,
+										download=True,
+										split_factor=1)
+				print('INFO:PyTorch: creating CIFAR100 validation dataloader...')
+				val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, **kwargs)
+				return val_loader
 	
 	elif dataset == 'imagenet':
-
+			
 		if 'train' in split:
 			print("INFO:PyTorch: Using ImageNet dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
 			traindir = os.path.join(data_dir, 'train')

@@ -376,6 +376,9 @@ def add_parser_params(parser):
     # cifar10 noniid
     parser.add_argument('--cifar10_non_iid', default='None', type=str,
 							help='Whether cifar10_non_iid.')
+                            # cifar10 noniid
+    parser.add_argument('--cifar100_non_iid', default='None', type=str,
+							help='Whether cifar100_non_iid.')
     # fedprox mu
     parser.add_argument('--mu',type=float, default=0.01, help='proximal term constant')
     args = parser.parse_args()
