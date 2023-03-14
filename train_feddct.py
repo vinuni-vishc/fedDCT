@@ -22,7 +22,7 @@ from dataset import factory
 import numpy as np
 from tqdm import tqdm
 from tensorboardX import SummaryWriter
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 # global best accuracy
 best_acc1 = 0
