@@ -31,7 +31,7 @@ def add_parser_params(parser):
 	
     parser.add_argument('--model_dir', type=str, default=model_dir,
 						help='dir to which model is saved (default: ./model_dir)')
-    parser.add_argument('--arch', type=str, default='resnet110',
+    parser.add_argument('--arch', type=str, default='wide_resnet16_8',
 							choices=['resnet34', 'resnet50', 'resnet101',
 									'resnet152', 'resnet200',
 									'resnet110','resnet110sl', 'resnet164',
@@ -159,7 +159,7 @@ def add_parser_params(parser):
 						help='number of groups in group norm if using group norm '
 								'as normalization method (default: 8)')
     # datatset
-    parser.add_argument('--dataset', type=str, default='cifar100',
+    parser.add_argument('--dataset', type=str, default='cifar10',
 							choices=['cifar10', 'cifar100', 'imagenet', 'svhn','ham10000','pill_base','pill_large'],
 							help='dataset name (default: pascal)')
 	
@@ -176,7 +176,7 @@ def add_parser_params(parser):
 							help='Use AutoAugment policy. "v0" or "original". (default: None)'
 							'This will disable autoaugment'),
 
-    parser.add_argument('--num_classes', default=100, type=int, metavar='N',
+    parser.add_argument('--num_classes', default=10, type=int, metavar='N',
 							help='The number of classes.')
 
     parser.add_argument('--is_label_smoothing', default=0, type=int,
@@ -226,7 +226,7 @@ def add_parser_params(parser):
 								'multi node data parallel training')
 
     # split factor
-    parser.add_argument('--split_factor', default=4, type=int,
+    parser.add_argument('--split_factor', default=1, type=int,
 							help='split one big network into split_factor small networks')
 
     parser.add_argument('--is_identical_init', default=0, type=int,
@@ -355,15 +355,15 @@ def add_parser_params(parser):
     parser.add_argument('--pretrained_dir', type=str, default=None)
 
     # federated learning
-    parser.add_argument('--is_fed', default=0, type=int,
+    parser.add_argument('--is_fed', default=1, type=int,
 							help='Whether training federated learning or not.')
-    parser.add_argument('--num_clusters', default=10, type=int,
+    parser.add_argument('--num_clusters', default=20, type=int,
 							help='Whether training federated learning or not.')
-    parser.add_argument('--num_selected', default=3, type=int,
+    parser.add_argument('--num_selected', default=20, type=int,
 							help='Number of clients selected for training per round.')
     parser.add_argument('--num_rounds', default=300, type=int,
 							help='Total number of training rounds.')
-    parser.add_argument('--fed_epochs', default=5, type=int,
+    parser.add_argument('--fed_epochs', default=1, type=int,
 							help='Number of epochs each client.')
     parser.add_argument('--fixed_cluster', default=0, type=int,
 							help='Whether if cluster is fixed or cluster is created from selected clients in each com round')
@@ -387,7 +387,11 @@ def add_parser_params(parser):
     assert not args.is_identical_init
     assert args.norm_mode == 'batch'
 
-	# number of classes
+    #fedgkt 
+    parser.add_argument('--wd', help='fedgkt weight decay parameter;', type=float, default=5e-4)
+    parser.add_argument('--temperature', default=3.0, type=float, help='Input the temperature: default(3.0)')
+    parser.add_argument('--whether_training_on_client', default=1, type=int)
+    # number of classes
     num_classes_dict = {
 						'cifar10': 10,
 						'cifar100': 100,
