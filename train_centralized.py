@@ -54,6 +54,7 @@ def main(args):
 def main_worker(gpu, ngpus_per_node, args):
     global best_acc1
     args.gpu = gpu
+    args.model_dir = str(HOME)+"/models/splitnet/"+str(args.spid)
     if args.is_distributed:
         print("INFO:PyTorch: Initialize process group for distributed training")
         if args.dist_url == "env://" and args.rank == -1:

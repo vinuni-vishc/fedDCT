@@ -13,9 +13,13 @@ from fedml_api.model.cv.resnet56_gkt.resnet_server import resnet56_server
 from fedml_api.model.cv.resnet_gkt.resnet import wide_resnet16_8_gkt,wide_resnet50_2_gkt,resnet110_gkt
 from fedml_api.distributed.fedgkt.GKTClientTrainer import GKTClientTrainer
 from fedml_api.distributed.fedgkt.GKTServerTrainer import GKTServerTrainer
+from config import HOME
+from tensorboardX import SummaryWriter
 device = torch.device("cuda:0")
 def main(args):
     # Data loading code
+    args.model_dir = str(HOME)+"/models/splitnet/"+str(args.spid)
+    val_writer = SummaryWriter(log_dir=os.path.join(args.model_dir, 'val'))
     args.loop_factor = 1 if args.is_train_sep or args.is_single_branch else args.split_factor
     data_split_factor = args.loop_factor if args.is_diff_data_train else 1
     args.is_distributed = args.world_size > 1 or args.multiprocessing_distributed
@@ -64,7 +68,7 @@ def main(args):
  
         client_trainer.append(GKTClientTrainer(i, train_data_local_dict, test_data_local_dict,
                                         device, model_client, args))
-    server_trainer = GKTServerTrainer(client_number, device, model_server, args)
+    server_trainer = GKTServerTrainer(client_number, device, model_server, args,val_writer)
     for round in range (0,args.num_rounds):
         for i in range (0,client_number):
             extracted_feature_dict, logits_dict, labels_dict, extracted_feature_dict_test, labels_dict_test = client_trainer[i].train()

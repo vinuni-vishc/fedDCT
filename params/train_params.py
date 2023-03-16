@@ -29,7 +29,7 @@ def add_parser_params(parser):
     parser.add_argument('--data', type=str, metavar='DIR', default=str(data_dir)+"/dataset/cifar",
 						help='path to dataset')
 	
-    parser.add_argument('--model_dir', type=str, default=model_dir,
+    parser.add_argument('--model_dir', type=str, default="feddct",
 						help='dir to which model is saved (default: ./model_dir)')
     parser.add_argument('--arch', type=str, default='wide_resnet16_8',
 							choices=['resnet34', 'resnet50', 'resnet101',
@@ -79,7 +79,8 @@ def add_parser_params(parser):
 
     parser.add_argument('--eval_per_epoch', default=1, type=int,
 						help='run evaluation per eval_per_epoch')
-
+    parser.add_argument('--spid', default="feddct", type=str,
+						help='name of experiment')
     # data augmentation
     parser.add_argument('--batch_size', default=128, type=int, metavar='N',
 						help='mini-batch size (default: 128), this is the total '
@@ -391,6 +392,11 @@ def add_parser_params(parser):
     parser.add_argument('--wd', help='fedgkt weight decay parameter;', type=float, default=5e-4)
     parser.add_argument('--temperature', default=3.0, type=float, help='Input the temperature: default(3.0)')
     parser.add_argument('--whether_training_on_client', default=1, type=int)
+    parser.add_argument('--sweep', default=0, type=int)
+    parser.add_argument('--test', action='store_true',
+                        help='test mode, only run 1-2 epochs to test the bug of the program')
+    parser.add_argument('--whether_distill_on_the_server', default=0, type=int)
+    parser.add_argument('--alpha', default=1.0, type=float, help='Input the relative weight: default(1.0)')
     # number of classes
     num_classes_dict = {
 						'cifar10': 10,

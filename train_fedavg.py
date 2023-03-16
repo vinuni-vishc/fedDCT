@@ -197,6 +197,7 @@ def validate(val_loader, model, args, streams=None):
 def main_worker(gpu, ngpus_per_node, args):
     global best_acc1
     args.gpu = gpu
+    args.model_dir = str(HOME)+"/models/splitnet/"+str(args.spid)
     if args.gpu is not None:
         if not args.evaluate:
             print("INFO:PyTorch: Use GPU: {} for training, the rank of this GPU is {}".format(

@@ -6,16 +6,17 @@ import torch
 import wandb
 from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-
+from utils import metric
 from fedml_api.distributed.fedgkt import utils
 
-
+saved_ckpt_filenames = []
 class GKTServerTrainer(object):
-    def __init__(self, client_num, device, server_model, args):
+    def __init__(self, client_num, device, server_model, args,writer):
         self.client_num = client_num
         self.device = device
         self.args = args
-
+        self.writer = writer
+        
         """
             when use data parallel, we should increase the batch size accordingly (single GPU = 64; 4 GPUs = 256)
             One epoch training time: single GPU (64) = 1:03; 4 x GPUs (256) = 38s; 4 x GPUs (64) = 1:00
@@ -110,12 +111,12 @@ class GKTServerTrainer(object):
         if self.args.test:
             epochs_server, whether_distill_back = self.get_server_epoch_strategy_test()
         else:
-            if self.args.client_model == "resnet56":
-                epochs_server, whether_distill_back = self.get_server_epoch_strategy_reset56_2(round_idx)
-            else:
-                epochs_server = 1
+            # if self.args.client_model == "resnet56":
+            #     epochs_server, whether_distill_back = self.get_server_epoch_strategy_reset56_2(round_idx)
+            # else:
+            epochs_server = 1
         # train according to the logits from the client
-        self.train_and_eval(round_idx, epochs_server)
+        self.train_and_eval(round_idx, epochs_server,self.writer,self.args)
 
         # adjust the learning rate based on the number of epochs.
         # https://pytorch.org/docs/stable/optim.html#torch.optim.lr_scheduler.ReduceLROnPlateau
@@ -188,45 +189,79 @@ class GKTServerTrainer(object):
             whether_distill_back = False
         return epochs, whether_distill_back
 
-    def train_and_eval(self, round_idx, epochs):
+    def train_and_eval(self, round_idx, epochs,val_writer,args):
         for epoch in range(epochs):
             logging.info("train_and_eval. round_idx = %d, epoch = %d" % (round_idx, epoch))
             train_metrics = self.train_large_model_on_the_server()
 
             if epoch == epochs - 1:
-                wandb.log({"Train/Loss": train_metrics['train_loss'], "epoch": round_idx + 1})
-                wandb.log({"Train/AccTop1": train_metrics['train_accTop1'], "epoch": round_idx + 1})
-                wandb.log({"Train/AccTop5": train_metrics['train_accTop5'], "epoch": round_idx + 1})
-
+                # wandb.log({"Train/Loss": train_metrics['train_loss'], "epoch": round_idx + 1})
+                # wandb.log({"Train/AccTop1": train_metrics['train_accTop1'], "epoch": round_idx + 1})
+                # wandb.log({"Train/AccTop5": train_metrics['train_accTop5'], "epoch": round_idx + 1})
+                val_writer.add_scalar(
+            '       average training loss', (train_metrics['train_loss']), global_step=round_idx)
                 # Evaluate for one epoch on validation set
                 test_metrics = self.eval_large_model_on_the_server()
 
                 # Find the best accTop1 model.
                 test_acc = test_metrics['test_accTop1']
 
-                wandb.log({"Test/Loss": test_metrics['test_loss'], "epoch": round_idx + 1})
-                wandb.log({"Test/AccTop1": test_metrics['test_accTop1'], "epoch": round_idx + 1})
-                wandb.log({"Test/AccTop5": test_metrics['test_accTop5'], "epoch": round_idx + 1})
-
-                last_path = os.path.join('./checkpoint/last.pth')
-                # Save latest model weights, optimizer and accuracy
-                torch.save({'state_dict': self.model_global.state_dict(),
-                            'optim_dict': self.optimizer.state_dict(),
-                            'epoch': round_idx + 1,
-                            'test_accTop1': test_metrics['test_accTop1'],
-                            'test_accTop5': test_metrics['test_accTop5']}, last_path)
-
-                # If best_eval, best_save_path
+                # wandb.log({"Test/Loss": test_metrics['test_loss'], "epoch": round_idx + 1})
+                # wandb.log({"Test/AccTop1": test_metrics['test_accTop1'], "epoch": round_idx + 1})
+                # wandb.log({"Test/AccTop5": test_metrics['test_accTop5'], "epoch": round_idx + 1})
+                val_writer.add_scalar(
+                    'test loss', test_metrics['test_loss'], global_step=round_idx)
+                val_writer.add_scalar(
+                    'test acc', test_metrics['test_accTop1'], global_step=round_idx)
                 is_best = test_acc >= self.best_acc
                 if is_best:
                     logging.info("- Found better accuracy")
                     self.best_acc = test_acc
-                    # Save best metrics in a json file in the model directory
-                    test_metrics['epoch'] = round_idx + 1
-                    utils.save_dict_to_json(test_metrics, os.path.join('./checkpoint/', "test_best_metrics.json"))
 
-                    # Save model and optimizer
-                    shutil.copyfile(last_path, os.path.join('./checkpoint/', 'best.pth'))
+                val_writer.add_scalar(
+                    'best_acc1', self.best_acc, global_step=round_idx)
+                # save checkpoints
+                filename = "checkpoint_{0}.pth.tar".format(round_idx)
+                saved_ckpt_filenames.append(filename)
+                # remove the oldest file if the number of saved ckpts is greater than args.max_ckpt_nums
+                if len(saved_ckpt_filenames) > args.max_ckpt_nums:
+                    os.remove(os.path.join(args.model_dir,
+                                        saved_ckpt_filenames.pop(0)))
+
+                ckpt_dict = {
+                    'round': round_idx + 1,
+                    'arch': args.arch,
+                    'state_dict': self.model_global.state_dict(),
+                    'best_acc1': self.best_acc,
+                    'optimizer': self.optimizer.state_dict(),
+                }
+
+         
+
+                metric.save_checkpoint(
+                    ckpt_dict, is_best, args.model_dir, filename=filename)
+                print('%d-th round' % round_idx)
+                print('average train loss %0.3g | test loss %0.3g | test acc: %0.3f' %
+                    (train_metrics['train_loss'], test_metrics['test_loss'], test_metrics['test_accTop1']))
+                # last_path = os.path.join('./checkpoint/last.pth')
+                # # Save latest model weights, optimizer and accuracy
+                # torch.save({'state_dict': self.model_global.state_dict(),
+                #             'optim_dict': self.optimizer.state_dict(),
+                #             'epoch': round_idx + 1,
+                #             'test_accTop1': test_metrics['test_accTop1'],
+                #             'test_accTop5': test_metrics['test_accTop5']}, last_path)
+
+                # # If best_eval, best_save_path
+                # is_best = test_acc >= self.best_acc
+                # if is_best:
+                #     logging.info("- Found better accuracy")
+                #     self.best_acc = test_acc
+                #     # Save best metrics in a json file in the model directory
+                #     test_metrics['epoch'] = round_idx + 1
+                #     utils.save_dict_to_json(test_metrics, os.path.join('./checkpoint/', "test_best_metrics.json"))
+
+                #     # Save model and optimizer
+                #     shutil.copyfile(last_path, os.path.join('./checkpoint/', 'best.pth'))
 
     def train_large_model_on_the_server(self):
         # clear the server side logits
