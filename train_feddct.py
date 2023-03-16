@@ -22,6 +22,7 @@ from dataset import factory
 import numpy as np
 from tqdm import tqdm
 from tensorboardX import SummaryWriter
+from params.train_params import save_hp_to_json
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 # global best accuracy
@@ -244,6 +245,8 @@ def main_worker(gpu, ngpus_per_node, args):
                               norm_layer=norm.norm(args.norm_mode),
                               criterion=criterion) for _ in range(args.num_selected)] 
 
+    if not args.is_summary and not args.evaluate:
+        save_hp_to_json(args)
     if args.is_summary:
         print(global_model_main_client)
         print(global_model_proxy_clients)

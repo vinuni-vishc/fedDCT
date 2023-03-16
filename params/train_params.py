@@ -666,8 +666,8 @@ def add_parser_params(parser):
         print("INFO:PyTorch: Using max ensemble manner.")
 
 	# save the hyper-parameters
-    if not args.is_summary and not args.evaluate:
-        save_hp_to_json(args)
+    # if not args.is_summary and not args.evaluate:
+    #     save_hp_to_json(args)
 	# args = parser_params.add_parser_params(parser)
 	# args = add_parser_params(parser)
     args = parser.parse_args()

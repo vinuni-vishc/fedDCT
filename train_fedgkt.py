@@ -13,12 +13,15 @@ from fedml_api.model.cv.resnet56_gkt.resnet_server import resnet56_server
 from fedml_api.model.cv.resnet_gkt.resnet import wide_resnet16_8_gkt,wide_resnet50_2_gkt,resnet110_gkt
 from fedml_api.distributed.fedgkt.GKTClientTrainer import GKTClientTrainer
 from fedml_api.distributed.fedgkt.GKTServerTrainer import GKTServerTrainer
+from params.train_params import save_hp_to_json
 from config import HOME
 from tensorboardX import SummaryWriter
 device = torch.device("cuda:0")
 def main(args):
     # Data loading code
     args.model_dir = str(HOME)+"/models/splitnet/"+str(args.spid)
+    if not args.is_summary and not args.evaluate:
+        save_hp_to_json(args)
     val_writer = SummaryWriter(log_dir=os.path.join(args.model_dir, 'val'))
     args.loop_factor = 1 if args.is_train_sep or args.is_single_branch else args.split_factor
     data_split_factor = args.loop_factor if args.is_diff_data_train else 1
@@ -90,6 +93,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     args = train_params.add_parser_params(parser)
     assert args.is_fed == 1, "For fed learning, args.if_fed must be 1"
+
     os.makedirs(args.model_dir, exist_ok=True)
     print(args)
     main(args)

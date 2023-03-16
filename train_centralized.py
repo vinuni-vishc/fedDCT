@@ -18,7 +18,7 @@ from utils import label_smoothing, norm, summary, metric, lr_scheduler, rmsprop_
 from model import splitnet
 from utils.thop import profile, clever_format
 from dataset import factory
-
+from params.train_params import save_hp_to_json
 # global best accuracy
 best_acc1 = 0
 
@@ -97,11 +97,13 @@ def main_worker(gpu, ngpus_per_node, args):
                               criterion=criterion)
     print("INFO:PyTorch: The number of parameters in the model is {}".format(
         metric.get_the_number_of_params(model)))
-
+    if not args.is_summary and not args.evaluate:
+        save_hp_to_json(args)
     if args.is_summary:
         print(model)
-        
+    
         return None
+    
     summary.save_model_to_json(args, model)
     if args.is_distributed:
         if args.world_size > 1 and args.is_syncbn:
