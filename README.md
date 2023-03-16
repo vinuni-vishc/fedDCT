@@ -1,5 +1,5 @@
 # Federated Divide and Cotraining
-
+**NOTE: We are currently developing a new version which will be released soon**
 This repository contains the code and experiments for the paper: 
 
 > [FedDCT: A Novel Federated Learning Approach
