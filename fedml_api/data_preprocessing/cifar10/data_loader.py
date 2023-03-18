@@ -239,7 +239,7 @@ def load_partition_data_cifar10(dataset, data_dir, partition_method, partition_a
                                                                                              client_number,
                                                                                              partition_alpha)
     class_num = len(np.unique(y_train))
-    logging.info("traindata_cls_counts = " + str(traindata_cls_counts))
+    # logging.info("traindata_cls_counts = " + str(traindata_cls_counts))
     train_data_num = sum([len(net_dataidx_map[r]) for r in range(client_number)])
 
     train_data_global, test_data_global = get_dataloader(dataset, data_dir, batch_size, batch_size)

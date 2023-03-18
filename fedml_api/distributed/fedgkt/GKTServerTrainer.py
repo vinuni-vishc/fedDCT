@@ -198,8 +198,11 @@ class GKTServerTrainer(object):
                 # wandb.log({"Train/Loss": train_metrics['train_loss'], "epoch": round_idx + 1})
                 # wandb.log({"Train/AccTop1": train_metrics['train_accTop1'], "epoch": round_idx + 1})
                 # wandb.log({"Train/AccTop5": train_metrics['train_accTop5'], "epoch": round_idx + 1})
+            #     val_writer.add_scalar(
+            # '       average training loss', train_metrics['train_loss'], global_step=round_idx)
                 val_writer.add_scalar(
-            '       average training loss', (train_metrics['train_loss']), global_step=round_idx)
+                    'average training loss', test_metrics['train_loss'], global_step=round_idx)
+
                 # Evaluate for one epoch on validation set
                 test_metrics = self.eval_large_model_on_the_server()
 
