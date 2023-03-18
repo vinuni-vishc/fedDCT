@@ -5,14 +5,15 @@ import random
 import torch
 from torchvision import transforms
 from torch.utils.data import DataLoader, Dataset
-
+from config import HOME
 np.random.seed(68)
 random.seed(68)
 
 def get_cifar10():
   '''Return CIFAR10 train/test data and labels as numpy arrays'''
-  data_train = torchvision.datasets.CIFAR10('/media/quannm/150be5a2-6412-4a07-a0ea-7a6184302592/code/fed-dct/splitnet/dataset/cifar/train', train=True, download=True)
-  data_test = torchvision.datasets.CIFAR10('/media/quannm/150be5a2-6412-4a07-a0ea-7a6184302592/code/fed-dct/splitnet/dataset/cifar/val', train=False, download=True) 
+  print(HOME)
+  data_train = torchvision.datasets.CIFAR10(HOME+'/dataset/cifar/train', train=True, download=True)
+  data_test = torchvision.datasets.CIFAR10(HOME+'dataset/cifar/val', train=False, download=True) 
   
   x_train, y_train = data_train.data.transpose((0,3,1,2)), np.array(data_train.targets)
   x_test, y_test = data_test.data.transpose((0,3,1,2)), np.array(data_test.targets)

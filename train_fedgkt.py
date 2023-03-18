@@ -54,8 +54,10 @@ def main(args):
                                          cifar100_non_iid= args.cifar100_non_iid)
     if args.dataset == "cifar10":
         data_loader = load_partition_data_cifar10
+        model_client,model_server = wide_resnet16_8_gkt()
     elif args.dataset == "cifar100":
         data_loader = load_partition_data_cifar100
+        model_client,model_server = resnet110_gkt()
     client_number = args.num_clusters*args.split_factor
     train_data_num, test_data_num, train_data_global, _, \
     _, _, test_data_local_dict, \
@@ -63,7 +65,7 @@ def main(args):
                             0.5, client_number, args.batch_size)
     dataset = [train_data_num, test_data_num, train_data_global, test_data_global,
             train_data_local_dict, test_data_local_dict, class_num]
-    model_client,model_server = wide_resnet16_8_gkt()
+    
     print("server and client create complete")
     round_idx = 0
     client_trainer = []
