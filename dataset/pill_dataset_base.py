@@ -4,8 +4,8 @@ from torch.utils.data import DataLoader, Dataset
 import torch
 import os
 import glob
-
-folder_path = '/media/quannm/150be5a2-6412-4a07-a0ea-7a6184302592/code/fed-dct/splitnet/dataset/pill_base'
+from config import HOME
+folder_path = HOME+'/dataset/pill_base'
 
 
 class PillDataBase(Dataset):
@@ -33,7 +33,7 @@ class PillDataBase(Dataset):
             for line in lines:
                 #print(line)
                 fn, ln = line.split(' ')
-                fn = fn.replace(f'/home/tung/Tung/research/Open-Pill/FACIL/data/Pill_Base_X', '/media/quannm/150be5a2-6412-4a07-a0ea-7a6184302592/code/fed-dct/splitnet/dataset/pill_base')
+                fn = fn.replace(f'/home/tung/Tung/research/Open-Pill/FACIL/data/Pill_Base_X', folder_path)
                 #print ([fn,int(ln)])
                 dataset.append([fn,int(ln)])
                 #print(os.path.isfile(fn))
