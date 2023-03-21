@@ -188,8 +188,8 @@ def scale_lr_and_momentum(args):
 			'Original lr: {args.lr}, Original momentum: {args.momentum}')
 	if 'cifar' in args.dataset:
 		std_b_size = 128
-	elif 'imagenet' in args.dataset:
-		std_b_size = 256
+	# elif 'imagenet' in args.dataset:
+	# 	std_b_size = 256
 	else:
 		raise NotImplementedError
 

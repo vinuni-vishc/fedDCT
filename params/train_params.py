@@ -161,7 +161,7 @@ def add_parser_params(parser):
 								'as normalization method (default: 8)')
     # datatset
     parser.add_argument('--dataset', type=str, default='cifar10',
-							choices=['cifar10', 'cifar100', 'imagenet', 'svhn','ham10000','pill_base','pill_large'],
+							choices=['cifar10', 'cifar100','ham10000','pill_base','pill_large'],
 							help='dataset name (default: pascal)')
 	
     parser.add_argument('--is_cutout', default=1, type=int,
@@ -401,8 +401,8 @@ def add_parser_params(parser):
     num_classes_dict = {
 						'cifar10': 10,
 						'cifar100': 100,
-						'imagenet': 1000,
-						'svhn': 10,
+						# 'imagenet': 1000,
+						# 'svhn': 10,
                         'ham10000' : 7,
                         'pill_base' : 98,
                         'pill_large' : 262,
@@ -413,40 +413,15 @@ def add_parser_params(parser):
     if args.dataset in ['cifar10', 'cifar100']:
         assert args.crop_size == 32
         args.is_label_smoothing = False
-    elif args.dataset == 'imagenet':
-        args.end_lr = 1e-5
-        args.is_label_smoothing = True
-        if not args.is_label_smoothing:
-            print("Warning: The default settings on ImageNet use label_smoothing while you "
-				"set it to False.")
-        assert args.crop_size in [224, 240, 256, 299, 300, 320, 331,
-									380, 416, 450, 456, 528, 600, 672, 800]
-        assert args.epochs in [90, 100, 120, 270, 350]
     elif args.dataset == 'pill_base' or args.dataset == 'pill_large':
         args.end_lr = 1e-5
         args.is_label_smoothing = True
         if not args.is_label_smoothing:
-            print("Warning: The default settings on ImageNet use label_smoothing while you "
+            print("Warning: The default settings on Pill use label_smoothing while you "
 				"set it to False.")
         assert args.crop_size in [224,256]
         #assert args.epochs in [90, 100, 120, 270, 350]
-    elif args.dataset == 'svhn':
-        assert args.crop_size == 32
-        args.end_lr = 1e-5
 
-        """ lr srategy 1, following RandAugment """
-        args.slow_start_epochs = -1
-        args.slow_start_lr = 5e-4
-        args.lr = 5e-3
-        args.weight_decay = 1e-3
-
-        """ lr strategy 2, following FastAugment
-        args.epochs = 200
-        args.slow_start_epochs = 5
-		args.slow_start_lr = 5e-4
-        args.lr = 0.01
-		args.weight_decay = 5e-4
-		"""
     elif args.dataset == 'ham10000':
         assert args.crop_size == 64
         args.end_lr = 0.0001
@@ -465,7 +440,6 @@ def add_parser_params(parser):
         args.lr_milestones = [30, 60, 90]
     
     elif args.epochs in [160, 200]:
-        # **For svhn dataset**
         args.lr_milestones = [80, 120]
     
     elif args.epochs == 300:
@@ -521,9 +495,7 @@ def add_parser_params(parser):
                 args.weight_decay = 5e-4
             else:
                 raise NotImplementedError
-        elif args.dataset == 'svhn':
-            pass
-        elif args.dataset == 'imagenet' or args.dataset == 'ham10000' or args.dataset =='pill_base' or args.dataset == 'pill_large':
+        elif args.dataset == 'ham10000' or args.dataset =='pill_base' or args.dataset == 'pill_large':
             if args.arch in ['resnet34', 'resnet50']:
                 args.weight_decay = 5e-5
             elif args.arch in ['resnet101', 'resnet152', 'resnet200',

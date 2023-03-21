@@ -303,10 +303,6 @@ def main_worker(gpu, ngpus_per_node, args):
                 # summary per epoch
                 val_writer.add_scalar(
                     'test_acc', acc_all[0], global_step=epoch)
-                if args.dataset == 'imagenet':
-                    val_writer.add_scalar(
-                        'avg_acc5', acc_all[1], global_step=epoch)
-
                 for i in range(1, args.loop_factor + 1):
                     val_writer.add_scalar('{}_acc1'.format(
                         i - 1), acc_all[i+1], global_step=epoch)
@@ -373,8 +369,7 @@ def train(val_writer,train_loader, model, optimizer, scheduler, epoch, args, str
         # ce_losses_l.append(metric.AverageMeter('{}_CE_Loss'.format(i), ':.4e'))
         top1_all.append(metric.AverageMeter('{}_Acc@1'.format(i), ':6.2f'))
     avg_top1 = metric.AverageMeter('Avg_Acc@1', ':6.2f')
-    # if args.dataset == 'imagenet':
-    #	avg_top5 = metric.AverageMeter('Avg_Acc@1', ':6.2f')
+
 
     # show all
     total_iters = len(train_loader)
@@ -549,7 +544,7 @@ def validate(val_loader, model, args, streams=None):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='PyTorch ImageNet Testing')
+    parser = argparse.ArgumentParser(description='Centralzed Training')
     args = train_params.add_parser_params(parser)
     assert args.is_fed == 0, "For centralized learning, args.if_fed must be false"
     os.makedirs(args.model_dir, exist_ok=True)

@@ -488,9 +488,9 @@ def main_worker(gpu, ngpus_per_node, args):
               (loss / args.num_selected, test_loss, acc))
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='PyTorch ImageNet Testing')
+    parser = argparse.ArgumentParser(description='Split Fed Trainig')
     args = train_params.add_parser_params(parser)
-    assert args.is_fed == 1, "For split fed learning, args.is_fed must be 1"
+    assert args.is_fed == 1, "For split fed learning, argns.is_fed must be 1"
     assert args.split_factor == 1, "For split fed learning, args.split_factor must be 1"
     os.makedirs(args.model_dir, exist_ok=True)
     print(args)

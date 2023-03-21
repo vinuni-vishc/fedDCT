@@ -9,8 +9,7 @@ __all__ = ['SplitNet']
 
 def _get_net(arch='wide_resnet28_10'):
     networks_obj_dict = {
-		# For ImageNet
-        # For CIFAR/SVHN
+        # For CIFAR
         'wide_resnet28_10': resnet.wide_resnet28_10,
         'wide_resnet16_8': resnet.wide_resnet16_8,
         'resnet110': resnet.resnet110,    

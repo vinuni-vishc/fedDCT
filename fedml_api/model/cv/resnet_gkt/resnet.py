@@ -166,15 +166,14 @@ class ResNetMainClient(nn.Module):
         # inplanes and base width of the bottleneck
         if groups == 1:
             self.groups = groups
-            inplanes_dict = {  # 'imagenet': {1: 64, 2: 48, 4: 32, 8: 24},
-                # 'imagenet': {1: 64, 2: 40, 4: 32, 8: 24},
-                'imagenet': {1: 64, 2: 44, 4: 32, 8: 24},
-                                                    'cifar10': {1: 16, 2: 12, 4: 8, 8: 6, 16: 4, 32: 3},
-                                                    'cifar100': {1: 16, 2: 12, 4: 8, 8: 6, 16: 4},
-                                                    'svhn': {1: 16, 2: 12, 4: 8, 8: 6, 16: 4},
-                                                    'ham10000': {1: 64, 2: 44, 4: 32, 8: 24},
-                                                    'pill_base': {1: 64, 2: 44, 4: 32, 8: 24},
-                                                    'pill_large': {1: 64, 2: 44, 4: 32, 8: 24},
+            inplanes_dict = {  
+                # 'imagenet': {1: 64, 2: 44, 4: 32, 8: 24},
+                'cifar10': {1: 16, 2: 12, 4: 8, 8: 6, 16: 4, 32: 3},
+                'cifar100': {1: 16, 2: 12, 4: 8, 8: 6, 16: 4},
+                # 'svhn': {1: 16, 2: 12, 4: 8, 8: 6, 16: 4},
+                'ham10000': {1: 64, 2: 44, 4: 32, 8: 24},
+                'pill_base': {1: 64, 2: 44, 4: 32, 8: 24},
+                'pill_large': {1: 64, 2: 44, 4: 32, 8: 24},
             }
             self.inplanes = inplanes_dict[dataset][split_factor]
         
@@ -184,7 +183,6 @@ class ResNetMainClient(nn.Module):
                     self.inplanes = 16
 
                 elif arch in ['wide_resnetsl50_2']:
-                    # wide_resnet50_2 and wide_resnet101_2 are for imagenet
                     # assert split_factor in [1, 2, 4] and (dataset ==
                     # 'imagenet' or dataset == 'ham10000' or dataset ==
                     # 'pill_base' or dataset == 'pill_large')
@@ -231,7 +229,7 @@ class ResNetMainClient(nn.Module):
     "replace_stride_with_dilation should be None "
     "or a 3-element tuple, got {}".format(replace_stride_with_dilation))
 
-        if (dataset == 'imagenet' or dataset == 'ham10000' or dataset ==
+        if (dataset == 'ham10000' or dataset ==
                 'pill_base' or dataset == 'pill_large'):
             self.layer0 = nn.Sequential(
                 nn.Conv2d(
@@ -270,7 +268,7 @@ class ResNetMainClient(nn.Module):
             strides = [1, 2, 2, 2]
             # n_channels = [64, 128, 256, 512]
 
-        elif dataset in ['cifar10', 'cifar100', 'svhn']:
+        elif dataset in ['cifar10', 'cifar100']:
             # for training cifar, change the kernel_size=7 -> kernel_size=3
             # with stride=1
             self.layer0 = nn.Sequential(
@@ -442,12 +440,11 @@ class ResNetProxyClients(nn.Module):
         # inplanes and base width of the bottleneck
         if groups == 1:
             self.groups = groups
-            inplanes_dict = {  # 'imagenet': {1: 64, 2: 48, 4: 32, 8: 24},
+            inplanes_dict = {  
                 # 'imagenet': {1: 64, 2: 40, 4: 32, 8: 24},
-                'imagenet': {1: 64, 2: 44, 4: 32, 8: 24},
                                                     'cifar10': {1: 16, 2: 12, 4: 8, 8: 6, 16: 4},
                                                     'cifar100': {1: 16, 2: 12, 4: 8, 8: 6, 16: 4},
-                                                    'svhn': {1: 16, 2: 12, 4: 8, 8: 6, 16: 4},
+                                                    # 'svhn': {1: 16, 2: 12, 4: 8, 8: 6, 16: 4},
                                                     'ham10000': {1: 64, 2: 44, 4: 32, 8: 24},
                                                     'pill_base': {1: 64, 2: 44, 4: 32, 8: 24},
                                                     'pill_large': {1: 64, 2: 44, 4: 32, 8: 24},
@@ -459,7 +456,6 @@ class ResNetProxyClients(nn.Module):
                     self.inplanes = 16
 
                 elif arch in ['wide_resnetsl50_2']:
-                    # wide_resnet50_2 and wide_resnet101_2 are for imagenet
                     # assert split_factor in [1, 2, 4] and (dataset == 'imagenet' or dataset=='ham10000' or dataset == 'pill_base' or dataset == 'pill_large')
 
                     # The below is the same as max(widen_factor / (split_factor
@@ -504,7 +500,7 @@ class ResNetProxyClients(nn.Module):
     "replace_stride_with_dilation should be None "
     "or a 3-element tuple, got {}".format(replace_stride_with_dilation))
 
-        if (dataset == 'imagenet' or dataset == 'ham10000' or dataset ==
+        if (dataset == 'ham10000' or dataset ==
                 'pill_base' or dataset == 'pill_large'):
             inplanes_origin = self.inplanes
             # 64 -> 128
@@ -512,7 +508,7 @@ class ResNetProxyClients(nn.Module):
             strides = [1, 2, 2, 2]
             # n_channels = [64, 128, 256, 512]
 
-        elif dataset in ['cifar10', 'cifar100', 'svhn']:
+        elif dataset in ['cifar10', 'cifar100']:
             # for training cifar, change the kernel_size=7 -> kernel_size=3
             # with stride=1
             inplanes_origin = self.inplanes
@@ -554,8 +550,8 @@ class ResNetProxyClients(nn.Module):
         # If dataset is cifar, do not use layer4 because the size of the feature map is too small.
         # The original paper of resnet set total stride=8 with less channels.
         self.layer4 = None
-        if ('imagenet' in dataset or 'ham10000' in dataset or 'pill_base' in dataset or 'pill_large' in dataset):
-            print('INFO:PyTorch: Using layer4 for ImageNet Training')
+        if ('ham10000' in dataset or 'pill_base' in dataset or 'pill_large' in dataset):
+            print('INFO:PyTorch: Using layer4 for ham and pill Training')
             self.layer4 = self._make_layer(
                 block,
                 inplanes_origin * 8,
@@ -576,14 +572,6 @@ class ResNetProxyClients(nn.Module):
                     print(
                         'INFO:PyTorch: Using dropout with ratio {}'.format(dropout_p))
                     self.dropout = nn.Dropout(dropout_p)
-
-        elif 'imagenet' in dataset:
-            if dropout_p is not None:
-                dropout_p = dropout_p / split_factor
-                # You can also use the below code.
-                # dropout_p = dropout_p / (split_factor ** 0.5)
-                print('INFO:PyTorch: Using dropout with ratio {}'.format(dropout_p))
-                self.dropout = nn.Dropout(dropout_p)
         
         self.fc = nn.Linear(inplanes_now * block.expansion, num_classes)
 
