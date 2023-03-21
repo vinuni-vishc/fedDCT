@@ -53,11 +53,11 @@ def load_partition_data_ham10000(dataset, data_dir, partition_method, partition_
     images_per_client = int(len(val_dataset)/ client_number) 
     print("Images per client is "+ str(images_per_client))
     data_split = [images_per_client for _ in range(client_number-1)]
-    data_split.append(len(train_dataset)-images_per_client*(client_number-1))
-    #print(data_split)
+    data_split.append(len(val_dataset)-images_per_client*(client_number-1))
+    print(data_split)
     testdata_split = torch.utils.data.random_split(val_dataset,data_split,generator=torch.Generator().manual_seed(68))
     test_data_local_dict = [torch.utils.data.DataLoader(x,
-														batch_size=batch_size,
+														batch_size=32,#needs to be < size of dataset on each client on test set)
 														shuffle=(train_sampler is None),
 														drop_last=True,
 														sampler=train_sampler,

@@ -50,7 +50,7 @@ def load_partition_data_pillbase(dataset, data_dir, partition_method, partition_
     #print(data_split)
     testdata_split = torch.utils.data.random_split(val_dataset,data_split,generator=torch.Generator().manual_seed(68))
     test_data_local_dict = [torch.utils.data.DataLoader(x,
-														batch_size=batch_size,
+														batch_size=32,
 														shuffle=(train_sampler is None),
 														drop_last=True,
 														sampler=train_sampler,
