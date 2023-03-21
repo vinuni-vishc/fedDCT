@@ -437,14 +437,14 @@ def get_data_loader(data_dir,
 		mean = [0.4550, 0.5239, 0.5653]
 		std = [0.2460, 0.2446, 0.2252]			
 		if 'train' in split:
-			print("INFO:PyTorch: Using pill Large dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
+			print("INFO:PyTorch: Using pill Base dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
 			train_transform = transforms.Compose([transforms.RandomResizedCrop(crop_size, scale=(0.1, 1.0),
 																				interpolation=Image.BILINEAR),
 														transforms.RandomHorizontalFlip()
 													])
 			# RandAugment
 			if randaa is not None and randaa.startswith('rand'):
-				print('INFO:PyTorch: creating Pill Large RandAugment policies')
+				print('INFO:PyTorch: creating Pill Base RandAugment policies')
 				aa_params = dict(
 								translate_const=int(crop_size * 0.45),
 								img_mean=tuple([min(255, round(255 * x)) for x in mean]),
@@ -465,7 +465,7 @@ def get_data_loader(data_dir,
 			if is_distributed:
 				train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, shuffle=True)
 
-			print('INFO:PyTorch: creating Pill Large train dataloader...')
+			print('INFO:PyTorch: creating Pill Base train dataloader...')
 			if is_fed:
 				images_per_client = int(len(train_dataset) / num_clusters/split_factor) 
 				print("Images per client is "+ str(images_per_client))
@@ -499,7 +499,7 @@ def get_data_loader(data_dir,
 			
 			val_dataset = PillDataBase(False,transform=val_transform,split_factor=1)
 
-			print('INFO:PyTorch: creating Pill Large validation dataloader...')
+			print('INFO:PyTorch: creating Pill Base validation dataloader...')
 			val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, **kwargs)
 			return val_loader
 	elif dataset == 'ham10000':
