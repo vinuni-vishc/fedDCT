@@ -201,7 +201,7 @@ class GKTServerTrainer(object):
             #     val_writer.add_scalar(
             # '       average training loss', train_metrics['train_loss'], global_step=round_idx)
                 val_writer.add_scalar(
-                    'average training loss', test_metrics['train_loss'], global_step=round_idx)
+                    'average training loss', train_metrics['train_loss'], global_step=round_idx)
 
                 # Evaluate for one epoch on validation set
                 test_metrics = self.eval_large_model_on_the_server()
