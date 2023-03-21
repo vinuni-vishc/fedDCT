@@ -7,6 +7,7 @@ from params import train_params
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 from fedml_api.data_preprocessing.cifar10.data_loader import load_partition_data_cifar10
 from fedml_api.data_preprocessing.cifar100.data_loader import load_partition_data_cifar100
+from fedml_api.data_preprocessing.ham10000.data_loader import load_partition_data_ham10000
 from fedml_api.model.cv.resnet56_gkt.resnet_client import resnet8_56
 from fedml_api.model.cv.resnet56_gkt.resnet_pretrained import resnet56_pretrained
 from fedml_api.model.cv.resnet56_gkt.resnet_server import resnet56_server
@@ -17,6 +18,7 @@ from params.train_params import save_hp_to_json
 from config import HOME
 from tensorboardX import SummaryWriter
 device = torch.device("cuda:0")
+# device = torch.device("cpu")
 def main(args):
     # Data loading code
     args.model_dir = str(HOME)+"/models/splitnet/"+str(args.spid)
@@ -58,6 +60,9 @@ def main(args):
     elif args.dataset == "cifar100":
         data_loader = load_partition_data_cifar100
         model_client,model_server = resnet110_gkt()
+    elif args.dataset == "ham10000":
+        data_loader = load_partition_data_ham10000
+        model_client,model_server = wide_resnet50_2_gkt()
     client_number = args.num_clusters*args.split_factor
     train_data_num, test_data_num, train_data_global, _, \
     _, _, test_data_local_dict, \

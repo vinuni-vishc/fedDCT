@@ -23,7 +23,7 @@ import numpy as np
 from tqdm import tqdm
 from tensorboardX import SummaryWriter
 from params.train_params import save_hp_to_json
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 # global best accuracy
 best_acc1 = 0

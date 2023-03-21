@@ -507,7 +507,7 @@ def get_data_loader(data_dir,
 		std = [0.229, 0.224, 0.225]
 		if 'train' in split:
 			print("INFO:PyTorch: Using ham10000 dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
-			train_file = open('/home/ubuntu/quan.nm209043/splitnet/dataset/ham10000/ham10000_train.pickle','rb')
+			train_file = open(HOME+'/dataset/ham10000/ham10000_train.pickle','rb')
 			train = pickle.load(train_file)
 			train_file.close
 			train_transforms = transforms.Compose([transforms.RandomHorizontalFlip(), 
@@ -551,7 +551,7 @@ def get_data_loader(data_dir,
 			return train_loader, train_sampler
 
 		else:
-			test_file = open("/home/ubuntu/quan.nm209043/splitnet/dataset/ham10000/ham10000_test.pickle","rb")
+			test_file = open(HOME+"/dataset/ham10000/ham10000_test.pickle","rb")
 			test = pickle.load(test_file)
 			test_file.close
 			val_transforms = transforms.Compose([
