@@ -11,8 +11,8 @@ random.seed(68)
 
 def get_cifar100():
   '''Return CIFAR100 train/test data and labels as numpy arrays'''
-  data_train = torchvision.datasets.CIFAR100('/home/ubuntu/quan.nm209043/splitnet/dataset/cifar/train', train=True, download=True)
-  data_test = torchvision.datasets.CIFAR100('/home/ubuntu/quan.nm209043/splitnet/dataset/cifar/val', train=False, download=True) 
+  data_train = torchvision.datasets.CIFAR100(HOME+'/dataset/cifar/train', train=True, download=True)
+  data_test = torchvision.datasets.CIFAR100(HOME+'/dataset/cifar/val', train=False, download=True) 
   
   x_train, y_train = data_train.data.transpose((0,3,1,2)), np.array(data_train.targets)
   x_test, y_test = data_test.data.transpose((0,3,1,2)), np.array(data_test.targets)
