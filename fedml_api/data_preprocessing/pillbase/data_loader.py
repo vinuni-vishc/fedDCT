@@ -29,7 +29,7 @@ def load_partition_data_pillbase(dataset, data_dir, partition_method, partition_
 														std))
     train_transform.transforms.append(transforms.RandomErasing(p=0.5, scale=(0.05, 0.12),
 															ratio=(0.5, 1.5), value=0))
-    train_dataset = PillDataBase(True,transform=train_transform,split_factor=1)
+    train_dataset = PillDataBase(data_dir,True,transform=train_transform,split_factor=1)
     train_sampler = None
     train_data_global = data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
     test_data_global = None
@@ -42,7 +42,7 @@ def load_partition_data_pillbase(dataset, data_dir, partition_method, partition_
 												transforms.Normalize(mean,
 																		std),
 	])
-    val_dataset = PillDataBase(False,transform=val_transform,split_factor=1)
+    val_dataset = PillDataBase(data_dir,False,transform=val_transform,split_factor=1)
     images_per_client = int(len(val_dataset)/ client_number) 
     print("Images per client is "+ str(images_per_client))
     data_split = [images_per_client for _ in range(client_number-1)]
