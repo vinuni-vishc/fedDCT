@@ -347,11 +347,11 @@ def add_parser_params(parser):
     # parser.add_argument('--is_memory_efficient_swish', default=0, type=int,
 	# 						help='Whether use memory-efficient Swish activation or not')
 	
-    # parser.add_argument('--decay_factor', default=0.97, type=float,
-	# 						help='decay factor of exponetital lr')
+    parser.add_argument('--decay_factor', default=0.97, type=float,
+							help='decay factor of exponetital lr')
 
-    # parser.add_argument('--decay_epochs', default=0.8, type=float,
-	# 						help='decay epochs of exponetital lr')
+    parser.add_argument('--decay_epochs', default=0.8, type=float,
+							help='decay epochs of exponetital lr')
 
     # multigpu test
     parser.add_argument('--is_test_on_multigpus', default=1, type=int,
