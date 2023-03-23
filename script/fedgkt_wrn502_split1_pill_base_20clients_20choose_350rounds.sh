@@ -23,4 +23,4 @@ DATA_DIR="$SGE_LOCALDIR/$JOB_ID/"
 cp -r ../AAAI2023/easyFL/benchmark/cifar100/data ${DATA_DIR}
 
 cd fedDCT
-python train_fedgkt.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnetsl50_2 --dataset=pill_base --num_classes=98 --is_single_branch=0 --is_amp=0 --num_rounds=350 --fed_epochs=1 --batch_size=32 --crop_size=224 --spid="fedgkt_wrn502_split1_pill_base_20clients_20choose_350rounds"
+python train_fedgkt.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnetsl50_2 --dataset=pill_base --num_classes=98 --is_single_branch=0 --is_amp=0 --num_rounds=350 --fed_epochs=1 --batch_size=32 --crop_size=224 --spid="fedgkt_wrn502_split1_pill_base_20clients_20choose_350rounds" --data=${DATA_DIR}
