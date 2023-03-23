@@ -311,46 +311,30 @@ def main_worker(gpu, ngpus_per_node, args):
                     'learning_rate', optimizer.param_groups[0]['lr'], global_step=epoch)
                 val_writer.add_scalar(
                     'best_acc1', best_acc1, global_step=epoch)
+                if(args.save_weight):
 
-                # save checkpoints
-                filename = "checkpoint_{0}.pth.tar".format(epoch)
-                saved_ckpt_filenames.append(filename)
-                # remove the oldest file if the number of saved ckpts is greater than args.max_ckpt_nums
-                if len(saved_ckpt_filenames) > args.max_ckpt_nums:
-                    os.remove(os.path.join(args.model_dir,
-                                           saved_ckpt_filenames.pop(0)))
+                    # save checkpoints
+                    filename = "checkpoint_{0}.pth.tar".format(epoch)
+                    saved_ckpt_filenames.append(filename)
+                    # remove the oldest file if the number of saved ckpts is greater than args.max_ckpt_nums
+                    if len(saved_ckpt_filenames) > args.max_ckpt_nums:
+                        os.remove(os.path.join(args.model_dir,
+                                            saved_ckpt_filenames.pop(0)))
 
-                ckpt_dict = {
-                    'epoch': epoch + 1,
-                    'arch': args.arch,
-                    'state_dict': model.state_dict(),
-                    'best_acc1': best_acc1,
-                    'optimizer': optimizer.state_dict(),
-                }
-                # ckpt_dict_model = {
-                #     'epoch': epoch + 1,
-                #     'arch': args.arch,
-                #     'state_dict': model.state_dict(),
-                #     'best_acc1': best_acc1,
-                # }
+                    ckpt_dict = {
+                        'epoch': epoch + 1,
+                        'arch': args.arch,
+                        'state_dict': model.state_dict(),
+                        'best_acc1': best_acc1,
+                        'optimizer': optimizer.state_dict(),
+                    }
 
-                # ckpt_dict_optim = {
-                #     'epoch': epoch + 1,
-                #     'arch': args.arch,
-                #     'state_dict': optimizer.state_dict(),
-                #     'best_acc1': best_acc1,
-                # }
+                    if args.is_amp:
+                        ckpt_dict['scaler'] = scaler.state_dict()
 
+                    metric.save_checkpoint(
+                        ckpt_dict, is_best, args.model_dir, filename=filename)
 
-                if args.is_amp:
-                    ckpt_dict['scaler'] = scaler.state_dict()
-
-                metric.save_checkpoint(
-                    ckpt_dict, is_best, args.model_dir, filename=filename)
-                # metric.save_checkpoint(
-                #     ckpt_dict_model, is_best, args.model_dir, filename="model.pth.tar")
-                # metric.save_checkpoint(
-                #     ckpt_dict_optim, is_best, args.model_dir, filename="optim.pth.tar")
     # clean GPU cache
     torch.cuda.empty_cache()
     sys.exit(0)

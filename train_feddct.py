@@ -448,45 +448,27 @@ def main_worker(gpu, ngpus_per_node, args):
         for sl in range(args.loop_factor):
                     val_writer.add_scalar('{}_acc1'.format(
                         sl), top1_all[sl].avg, global_step=r)
-        # for i in tqdm(range(args.num_selected)):
-        #     val_writer.add_scalar('best_acc1',top1_all[i].avg, global_step=r)
-        # save checkpoints
-        # filename = "main_client_checkpoint_{0}.pth.tar".format(r)
-        # filename_ = "proxy_clients_checkpoint_{0}.pth.tar".format(r)
-        # saved_ckpt_filenames.append(filename)
-        # saved_ckpt_filenames_.append(filename_)
-        # # remove the oldest file if the number of saved ckpts is greater than args.max_ckpt_nums
-        # if len(saved_ckpt_filenames) > args.max_ckpt_nums:
-        #     os.remove(os.path.join(args.model_dir,
-        #                                    saved_ckpt_filenames.pop(0)))
-        # if len(saved_ckpt_filenames_) > args.max_ckpt_nums:
-        #     os.remove(os.path.join(args.model_dir,
-        #                                    saved_ckpt_filenames_.pop(0)))
-        ckpt_dict_main_client = {
-            'round': r + 1,
-            'arch': args.arch,
-            'state_dict': global_model_main_client.state_dict(),
-            'best_acc1': best_acc1,
-            'optimizer': optimizers_main_clients[i].state_dict(),
-        }
+        if(args.save_weight):
+            ckpt_dict_main_client = {
+                'round': r + 1,
+                'arch': args.arch,
+                'state_dict': global_model_main_client.state_dict(),
+                'best_acc1': best_acc1,
+                'optimizer': optimizers_main_clients[i].state_dict(),
+            }
 
-        ckpt_dict_proxy_clients = {
-            'round': r + 1,
-            'arch': args.arch,
-            'state_dict': global_model_proxy_clients.state_dict(),
-            'best_acc1': best_acc1,
-            'optimizer': optimizers_proxy_clients[i].state_dict(),
-        }
-
-        # metric.save_checkpoint(
-        #         ckpt_dict_main_client, is_best, args.model_dir, filename=filename)
-        # metric.save_checkpoint(
-        #         ckpt_dict_proxy_clients, is_best, args.model_dir, filename=filename_)
-        
-        metric.save_checkpoint_main_client(
-                ckpt_dict_main_client, is_best, args.model_dir)
-        metric.save_checkpoint_proxy_clients(
-                ckpt_dict_proxy_clients, is_best, args.model_dir)
+            ckpt_dict_proxy_clients = {
+                'round': r + 1,
+                'arch': args.arch,
+                'state_dict': global_model_proxy_clients.state_dict(),
+                'best_acc1': best_acc1,
+                'optimizer': optimizers_proxy_clients[i].state_dict(),
+            }
+            
+            metric.save_checkpoint_main_client(
+                    ckpt_dict_main_client, is_best, args.model_dir)
+            metric.save_checkpoint_proxy_clients(
+                    ckpt_dict_proxy_clients, is_best, args.model_dir)
         print('%d-th round' % r)
         print('average train loss %0.3g | test loss %0.3g | test acc: %0.3f' %
               (loss / args.num_selected, test_loss, acc))

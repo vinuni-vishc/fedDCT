@@ -223,26 +223,27 @@ class GKTServerTrainer(object):
 
                 val_writer.add_scalar(
                     'best_acc1', self.best_acc, global_step=round_idx)
-                # save checkpoints
-                filename = "checkpoint_{0}.pth.tar".format(round_idx)
-                saved_ckpt_filenames.append(filename)
-                # remove the oldest file if the number of saved ckpts is greater than args.max_ckpt_nums
-                if len(saved_ckpt_filenames) > args.max_ckpt_nums:
-                    os.remove(os.path.join(args.model_dir,
-                                        saved_ckpt_filenames.pop(0)))
+                if(args.save_weight):
+                    # save checkpoints
+                    filename = "checkpoint_{0}.pth.tar".format(round_idx)
+                    saved_ckpt_filenames.append(filename)
+                    # remove the oldest file if the number of saved ckpts is greater than args.max_ckpt_nums
+                    if len(saved_ckpt_filenames) > args.max_ckpt_nums:
+                        os.remove(os.path.join(args.model_dir,
+                                            saved_ckpt_filenames.pop(0)))
 
-                ckpt_dict = {
-                    'round': round_idx + 1,
-                    'arch': args.arch,
-                    'state_dict': self.model_global.state_dict(),
-                    'best_acc1': self.best_acc,
-                    'optimizer': self.optimizer.state_dict(),
-                }
+                    ckpt_dict = {
+                        'round': round_idx + 1,
+                        'arch': args.arch,
+                        'state_dict': self.model_global.state_dict(),
+                        'best_acc1': self.best_acc,
+                        'optimizer': self.optimizer.state_dict(),
+                    }
 
-         
+            
 
-                metric.save_checkpoint(
-                    ckpt_dict, is_best, args.model_dir, filename=filename)
+                    metric.save_checkpoint(
+                        ckpt_dict, is_best, args.model_dir, filename=filename)
                 print('%d-th round' % round_idx)
                 print('average train loss %0.3g | test loss %0.3g | test acc: %0.3f' %
                     (train_metrics['train_loss'], test_metrics['test_loss'], test_metrics['test_accTop1']))

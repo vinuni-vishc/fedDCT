@@ -32,33 +32,38 @@ def add_parser_params(parser):
     parser.add_argument('--model_dir', type=str, default="feddct",
 						help='dir to which model is saved (default: ./model_dir)')
     parser.add_argument('--arch', type=str, default='wide_resnet16_8',
-							choices=['resnet34', 'resnet50', 'resnet101',
-									'resnet152', 'resnet200',
-									'resnet110','resnet110sl', 'resnet164',
-									'wide_resnet16_8','wide_resnetsl16_8', 'wide_resnet16_12',
-									'wide_resnet28_10', 'wide_resnet40_10',
-									'wide_resnet52_8',
-									'wide_resnet50_2','wide_resnetsl50_2', 'wide_resnet50_3', 'wide_resnet101_2',
-									'resnext50_32x4d', 'resnext101_32x4d', 'resnext101_64x4d',
-									'resnext29_8x64d', 'resnext29_16x64d',
-									'se_resnet110', 'se_resnet164',
-									'se_resnet50', 'se_resnet50_B',
-									'se_resnet101', 'se_resnet152',
-									'se_resnext101_64x4d',
-									'se_resnext101_64x4d_B',
-									'senet154', 'senet113',
-									'shake_resnet26_2x96d',
-									'densenet190',
-									'pyramidnet164', 'pyramidnet272',
-									'efficientnetb0', 'efficientnetb1',
-									'efficientnetb2', 'efficientnetb3',
-									'efficientnetb4', 'efficientnetb5',
-									'efficientnetb6', 'efficientnetb7',
-									'efficientnetb8', 'efficientnetl2',
-									'resnest101', 'resnest200', 'resnest269',
-									'resnexst50_4x16d', 'resnexst50_8x16d',
-									'resnexst50_4x32d',
-									'resnexst101_8x32d'],
+							choices=[
+                                    # 'resnet34', 'resnet50', 'resnet101',
+									# 'resnet152', 'resnet200',
+									'resnet110','resnet110sl', 
+                                    # 'resnet164',
+									'wide_resnet16_8','wide_resnetsl16_8', 
+                                    # 'wide_resnet16_12',
+									# 'wide_resnet28_10', 'wide_resnet40_10',
+									# 'wide_resnet52_8',
+									'wide_resnet50_2','wide_resnetsl50_2', 
+                                    # 'wide_resnet50_3', 'wide_resnet101_2',
+									# 'resnext50_32x4d', 'resnext101_32x4d', 'resnext101_64x4d',
+									# 'resnext29_8x64d', 'resnext29_16x64d',
+									# 'se_resnet110', 'se_resnet164',
+									# 'se_resnet50', 'se_resnet50_B',
+									# 'se_resnet101', 'se_resnet152',
+									# 'se_resnext101_64x4d',
+									# 'se_resnext101_64x4d_B',
+									# 'senet154', 'senet113',
+									# 'shake_resnet26_2x96d',
+									# 'densenet190',
+									# 'pyramidnet164', 'pyramidnet272',
+									# 'efficientnetb0', 'efficientnetb1',
+									# 'efficientnetb2', 'efficientnetb3',
+									# 'efficientnetb4', 'efficientnetb5',
+									# 'efficientnetb6', 'efficientnetb7',
+									# 'efficientnetb8', 'efficientnetl2',
+									# 'resnest101', 'resnest200', 'resnest269',
+									# 'resnexst50_4x16d', 'resnexst50_8x16d',
+									# 'resnexst50_4x32d',
+									# 'resnexst101_8x32d'
+                                    ],
 							help='The name of the neural architecture (default: wide_resnet28_10)')
 
     parser.add_argument('--norm_mode', type=str, default='batch',
@@ -81,6 +86,8 @@ def add_parser_params(parser):
 						help='run evaluation per eval_per_epoch')
     parser.add_argument('--spid', default="feddct", type=str,
 						help='name of experiment')
+    parser.add_argument('--save_weight', default=False, type=bool,
+						help='save weight or not')                 
     # data augmentation
     parser.add_argument('--batch_size', default=128, type=int, metavar='N',
 						help='mini-batch size (default: 128), this is the total '
@@ -319,32 +326,32 @@ def add_parser_params(parser):
 							help="Gradient accumulation adds gradients "
 							"over an effective batch of size batch_per_iter * iters_to_accumulate")
 
-    # (memory efficient) densenet
-    parser.add_argument('--is_efficient_densenet', default=0, type=int,
-							help='Whether use efficient densenet or not.')
+    # # (memory efficient) densenet
+    # parser.add_argument('--is_efficient_densenet', default=0, type=int,
+	# 						help='Whether use efficient densenet or not.')
 
-    parser.add_argument('--is_official_densenet', default=1, type=int,
-							help='Whether use official densenet implementation or not.')
+    # parser.add_argument('--is_official_densenet', default=1, type=int,
+	# 						help='Whether use official densenet implementation or not.')
 	
-    parser.add_argument('--densenet_p_shakedrop', default=0.0, type=float,
-							help='final shake drop probability of shake drop layers in densenet.')
+    # parser.add_argument('--densenet_p_shakedrop', default=0.0, type=float,
+	# 						help='final shake drop probability of shake drop layers in densenet.')
 
-    # setting of efficientnet
-    parser.add_argument('--is_efficientnet_user_crop', default=0, type=int,
-							help='To save memory, one can use small crop size.')
+    # # setting of efficientnet
+    # parser.add_argument('--is_efficientnet_user_crop', default=0, type=int,
+	# 						help='To save memory, one can use small crop size.')
 
-    parser.add_argument('--is_lukemelas_efficientnet', default=1, type=int,
-							help='If True, use the implementation of '
-								'https://github.com/lukemelas/EfficientNet-PyTorch.')
+    # parser.add_argument('--is_lukemelas_efficientnet', default=1, type=int,
+	# 						help='If True, use the implementation of '
+	# 							'https://github.com/lukemelas/EfficientNet-PyTorch.')
 	
-    parser.add_argument('--is_memory_efficient_swish', default=0, type=int,
-							help='Whether use memory-efficient Swish activation or not')
+    # parser.add_argument('--is_memory_efficient_swish', default=0, type=int,
+	# 						help='Whether use memory-efficient Swish activation or not')
 	
-    parser.add_argument('--decay_factor', default=0.97, type=float,
-							help='decay factor of exponetital lr')
+    # parser.add_argument('--decay_factor', default=0.97, type=float,
+	# 						help='decay factor of exponetital lr')
 
-    parser.add_argument('--decay_epochs', default=0.8, type=float,
-							help='decay epochs of exponetital lr')
+    # parser.add_argument('--decay_epochs', default=0.8, type=float,
+	# 						help='decay epochs of exponetital lr')
 
     # multigpu test
     parser.add_argument('--is_test_on_multigpus', default=1, type=int,
@@ -446,127 +453,131 @@ def add_parser_params(parser):
         args.slow_start_epochs = 20
         args.lr_milestones = [100,225]
         # The two networks seem unstable during training in practice.
-        if args.arch in ['resnext29_16x64d', 'se_resnet164']:
-            args.slow_start_epochs = 30
-            if args.arch == 'resnext29_16x64d':
-                args.lr = args.lr / 2.0
+        # if args.arch in ['resnext29_16x64d', 'se_resnet164']:
+        #     args.slow_start_epochs = 30
+        #     if args.arch == 'resnext29_16x64d':
+        #         args.lr = args.lr / 2.0
 
     elif args.epochs == 650:
         args.slow_start_epochs = 20
         args.lr_milestones = [200,400]
         # The two networks seem unstable during training in practice.
-        if args.arch in ['resnext29_16x64d', 'se_resnet164']:
-            args.slow_start_epochs = 30
-            if args.arch == 'resnext29_16x64d':
-                args.lr = args.lr / 2.0
+        # if args.arch in ['resnext29_16x64d', 'se_resnet164']:
+        #     args.slow_start_epochs = 30
+        #     if args.arch == 'resnext29_16x64d':
+        #         args.lr = args.lr / 2.0
 
-    elif args.epochs == 1800:
-        if args.arch == 'shake_resnet26_2x96d':
-            # Xavier Gastaldi, Shake-Shake regularization, 2017.
-            # The paper said lr=0.2 and no warm-up in Sec2.1.
-            args.lr = 0.2
-            args.slow_start_epochs = -1
-        elif 'pyramidnet' in args.arch or 'densenet' in args.arch:
-            # args.lr = 0.1
-            args.slow_start_epochs = -1
-        else:
-            args.slow_start_epochs = 60
-        args.cot_weight_warm_up_epochs = args.cot_weight_warm_up_epochs * 2
+    # elif args.epochs == 1800:
+    #     if args.arch == 'shake_resnet26_2x96d':
+    #         # Xavier Gastaldi, Shake-Shake regularization, 2017.
+    #         # The paper said lr=0.2 and no warm-up in Sec2.1.
+    #         args.lr = 0.2
+    #         args.slow_start_epochs = -1
+    #     elif 'pyramidnet' in args.arch or 'densenet' in args.arch:
+    #         # args.lr = 0.1
+    #         args.slow_start_epochs = -1
+    #     else:
+    #         args.slow_start_epochs = 60
+    #     args.cot_weight_warm_up_epochs = args.cot_weight_warm_up_epochs * 2
     else:
         raise NotImplementedError("The epoch number is illegal")
     
     if not args.is_wd_test:
         # weight decay for CIFAR
         if args.dataset in ['cifar10', 'cifar100']:
-            if args.arch in ['resnet110', 'resnet110sl', 'resnet164',
-                                'se_resnet110', 'se_resnet164',
+            if args.arch in ['resnet110', 'resnet110sl', 
+                                # 'resnet164',
+                                # 'se_resnet110', 'se_resnet164',
                                 'wide_resnet16_8','wide_resnetsl16_8',
-								'efficientnetb0', 'efficientnetb1', 'efficientnetb2',
-								'shake_resnet26_2x96d',
-								'pyramidnet164', 'pyramidnet272',
-								'densenet190'
+								# 'efficientnetb0', 'efficientnetb1', 'efficientnetb2',
+								# 'shake_resnet26_2x96d',
+								# 'pyramidnet164', 'pyramidnet272',
+								# 'densenet190'
 								]:
                 args.weight_decay = 1e-4
-            elif args.arch in ['efficientnetb3',
-								'resnext29_8x64d', 'resnext29_16x64d',
-								'wide_resnet16_12', 'wide_resnet28_10',
-								'wide_resnet40_10', 'wide_resnet52_8']:
-				# a larger weight decay for large model
-                args.weight_decay = 5e-4
+            # elif args.arch in ['efficientnetb3',
+			# 					'resnext29_8x64d', 'resnext29_16x64d',
+			# 					'wide_resnet16_12', 'wide_resnet28_10',
+			# 					'wide_resnet40_10', 'wide_resnet52_8']:
+			# 	# a larger weight decay for large model
+            #     args.weight_decay = 5e-4
             else:
                 raise NotImplementedError
         elif args.dataset == 'ham10000' or args.dataset =='pill_base' or args.dataset == 'pill_large':
             if args.arch in ['resnet34', 'resnet50']:
                 args.weight_decay = 5e-5
-            elif args.arch in ['resnet101', 'resnet152', 'resnet200',
-								'resnext50_32x4d', 'resnext101_32x4d', 'resnext101_64x4d',
-								'se_resnet50', 'se_resnet50_B',
-								'se_resnext101_64x4d', 'se_resnext101_64x4d_B',
-								'se_resnet152', 'senet154', 'senet113',
-								'wide_resnet50_2','wide_resnetsl50_2', 'wide_resnet50_3', 'wide_resnet101_2',
-								'resnest101', 'resnest200', 'resnest269',
-								'resnexst50_32x4d', 'resnexst50_16x8d',
-								'resnexst50_4x16d', 'resnexst50_8x16d',
-								'resnexst50_4x32d', 'resnexst101_8x32d']:
+            elif args.arch in [         
+                                # 'resnet101', 'resnet152', 'resnet200',
+								# 'resnext50_32x4d', 'resnext101_32x4d', 'resnext101_64x4d',
+								# 'se_resnet50', 'se_resnet50_B',
+								# 'se_resnext101_64x4d', 'se_resnext101_64x4d_B',
+								# 'se_resnet152', 'senet154', 'senet113',
+								'wide_resnet50_2','wide_resnetsl50_2', 
+                                # 'wide_resnet50_3', 'wide_resnet101_2',
+								# 'resnest101', 'resnest200', 'resnest269',
+								# 'resnexst50_32x4d', 'resnexst50_16x8d',
+								# 'resnexst50_4x16d', 'resnexst50_8x16d',
+								# 'resnexst50_4x32d', 'resnexst101_8x32d'
+                                ]:
 				# For WRN, original weight decay is 5e-4
 				# https://github.com/szagoruyko/wide-residual-networks
 				# https://github.com/szagoruyko/wide-residual-networks/blob/master/pretrained/README.md
                 args.weight_decay = 1e-4
-                if args.arch in ['se_resnext101_64x4d_B', 'senet113', 'resnexst101_8x32d']:
-					# args.is_mixup = False if args.arch != 'resnexst101_8x32d' else True
-                    args.is_autoaugment = False
-                    args.randaa = 'rand-m9-mstd0.5'
-                    args.lr = args.lr * (1.0 * args.batch_size / 256)
+                # if args.arch in ['se_resnext101_64x4d_B', 'senet113', 'resnexst101_8x32d']:
+				# 	# args.is_mixup = False if args.arch != 'resnexst101_8x32d' else True
+                #     args.is_autoaugment = False
+                #     args.randaa = 'rand-m9-mstd0.5'
+                #     args.lr = args.lr * (1.0 * args.batch_size / 256)
 				
-                if args.arch in ['resnexst50_32x4d', 'se_resnet50',
-									'resnexst50_4x16d', 'resnexst50_8x16d', 'resnexst50_4x32d']:
-					# args.is_mixup = False if 'resnexst' not in args.arch else True
-                    args.is_autoaugment = False
-                    args.randaa = 'rand-m6-mstd0.5'
-            elif 'efficientnet' in args.arch:
-                # Reference:
-				# Mingxing Tan, Quoc V. Le.
-				# EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks.
-				# https://github.com/tensorflow/tpu/blob/models/official/efficientnet/main.py
-				# https://github.com/rwightman/pytorch-image-models/blob/fcb6258877/docs/training_hparam_examples.md
+                # if args.arch in ['resnexst50_32x4d', 'se_resnet50',
+				# 					'resnexst50_4x16d', 'resnexst50_8x16d', 'resnexst50_4x32d']:
+				# 	# args.is_mixup = False if 'resnexst' not in args.arch else True
+                #     args.is_autoaugment = False
+                #     args.randaa = 'rand-m6-mstd0.5'
+            # elif 'efficientnet' in args.arch:
+            #     # Reference:
+			# 	# Mingxing Tan, Quoc V. Le.
+			# 	# EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks.
+			# 	# https://github.com/tensorflow/tpu/blob/models/official/efficientnet/main.py
+			# 	# https://github.com/rwightman/pytorch-image-models/blob/fcb6258877/docs/training_hparam_examples.md
 
-				# args.lr_mode = 'exponential'
-				# 0.016, 0.032, 0.064, 0.256
-                args.lr = 0.256
+			# 	# args.lr_mode = 'exponential'
+			# 	# 0.016, 0.032, 0.064, 0.256
+            #     args.lr = 0.256
 
-				# For efficientnet, 2.4 epochs on ImageNet with total epochs 350 and batch 2048.
-				# I tested decay epochs 2.4 with batch size 128, it is a too large wd for RMSprop
-				# and leads to inferior performance (efficientb1, 71.14%).
-				# To match the decay times, 120 epochs training uses a decay epoch 0.8 with batch 256.
-				# To match the decay steps, decay steps should be equal to 1500
-				# (decay_epochs 0.3, not tested).
-				# This will lead to a too small lr in the late stage of training.
-				# So we match the decay times.
-                args.decay_epochs = 0.8
-                args.weight_decay = 1e-5
-                args.slow_start_epochs = 5
-                args.slow_start_lr = 1e-6
-				# In experiments, we found mixup will lead to inferior performance on ImageNet.
-                args.is_mixup = False
-				# efficientnet config: (random erasing probability, rand augment config, crop size)
-                effi_config_dict = {
-								'efficientnetb0': (0.2, 'rand-m4-mstd0.5', 224),
-								'efficientnetb1': (0.2, 'rand-m4-mstd0.5', 240),
-								'efficientnetb2': (0.3, 'rand-m5-mstd0.5', 260),
-								'efficientnetb3': (0.3, 'rand-m6-mstd0.5', 300),
-								'efficientnetb4': (0.4, 'rand-m6-mstd0.5', 380),
-								'efficientnetb5': (0.4, 'rand-m7-mstd0.5', 456),
-								'efficientnetb6': (0.5, 'rand-m8-mstd0.5', 528),
-								'efficientnetb7': (0.5, 'rand-m9-mstd0.5', 600),
-								'efficientnetb8': (0.5, 'rand-m9-mstd0.5', 672),
-								'efficientnetl2': (0.5, 'rand-m9-mstd0.5', 800),
-							}
-                args.erase_p = effi_config_dict[args.arch][0]
-                args.is_autoaugment = False
-                args.randaa = effi_config_dict[args.arch][1]
-				# change the crop size for efficientnet, this also means your user setting is useless
-                if not args.is_efficientnet_user_crop:
-                    args.crop_size = effi_config_dict[args.arch][2]
+			# 	# For efficientnet, 2.4 epochs on ImageNet with total epochs 350 and batch 2048.
+			# 	# I tested decay epochs 2.4 with batch size 128, it is a too large wd for RMSprop
+			# 	# and leads to inferior performance (efficientb1, 71.14%).
+			# 	# To match the decay times, 120 epochs training uses a decay epoch 0.8 with batch 256.
+			# 	# To match the decay steps, decay steps should be equal to 1500
+			# 	# (decay_epochs 0.3, not tested).
+			# 	# This will lead to a too small lr in the late stage of training.
+			# 	# So we match the decay times.
+            #     args.decay_epochs = 0.8
+            #     args.weight_decay = 1e-5
+            #     args.slow_start_epochs = 5
+            #     args.slow_start_lr = 1e-6
+			# 	# In experiments, we found mixup will lead to inferior performance on ImageNet.
+            #     args.is_mixup = False
+			# 	# efficientnet config: (random erasing probability, rand augment config, crop size)
+            #     effi_config_dict = {
+			# 					'efficientnetb0': (0.2, 'rand-m4-mstd0.5', 224),
+			# 					'efficientnetb1': (0.2, 'rand-m4-mstd0.5', 240),
+			# 					'efficientnetb2': (0.3, 'rand-m5-mstd0.5', 260),
+			# 					'efficientnetb3': (0.3, 'rand-m6-mstd0.5', 300),
+			# 					'efficientnetb4': (0.4, 'rand-m6-mstd0.5', 380),
+			# 					'efficientnetb5': (0.4, 'rand-m7-mstd0.5', 456),
+			# 					'efficientnetb6': (0.5, 'rand-m8-mstd0.5', 528),
+			# 					'efficientnetb7': (0.5, 'rand-m9-mstd0.5', 600),
+			# 					'efficientnetb8': (0.5, 'rand-m9-mstd0.5', 672),
+			# 					'efficientnetl2': (0.5, 'rand-m9-mstd0.5', 800),
+			# 				}
+            #     args.erase_p = effi_config_dict[args.arch][0]
+            #     args.is_autoaugment = False
+            #     args.randaa = effi_config_dict[args.arch][1]
+			# 	# change the crop size for efficientnet, this also means your user setting is useless
+            #     if not args.is_efficientnet_user_crop:
+            #         args.crop_size = effi_config_dict[args.arch][2]
             else:
                 raise NotImplementedError
         else:
@@ -630,18 +641,13 @@ def add_parser_params(parser):
     if args.is_apex_amp:
         print("INFO:PyTorch: Using APEX AMP training.")
         raise ValueError("is_apex_amp should not be TRUE as APEX AMP is no longer supported."
-					"Use torch.cuda.amp() instead.")
+					"Use torch.cuda.amp() instead.")    
     if args.is_amp:
         print("INFO:PyTorch: Using PyTorch AMP training.")
 
     if args.is_max_ensemble:
         print("INFO:PyTorch: Using max ensemble manner.")
 
-	# save the hyper-parameters
-    # if not args.is_summary and not args.evaluate:
-    #     save_hp_to_json(args)
-	# args = parser_params.add_parser_params(parser)
-	# args = add_parser_params(parser)
     args = parser.parse_args()
     return args
     
