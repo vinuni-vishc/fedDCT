@@ -5,14 +5,15 @@ import torch
 import os
 import glob
 from config import HOME
-folder_path = HOME+'/dataset/pill_base'
+# folder_path = HOME+'/dataset/pill_base'
 
 
 class PillDataBase(Dataset):
-    def __init__(self, train = True,transform = None, split_factor=1):
+    def __init__(self,data_dir=HOME+'dataset/pill_base', train = True,transform = None, split_factor=1):
         self.train = train
         self.transform = transform
         self.split_factor = split_factor
+        self.data_dir = data_dir+'/pill_base'
         # self.dataset = self.get_data()
         self.dataset = self.get_data()
 
@@ -22,18 +23,18 @@ class PillDataBase(Dataset):
         dataset = []
         if self.train:
             #folder_path_ = folder_path+'/train'
-            txt_path = folder_path+ '/train.txt'
+            txt_path = self.data_dir+ '/train.txt'
         
         else: 
             #folder_path_ = folder_path+'/test'
-            txt_path = folder_path+ '/test.txt'
+            txt_path = self.data_dir+ '/test.txt'
         
         with open(txt_path,'r') as fr : 
             lines = fr.readlines()
             for line in lines:
                 #print(line)
                 fn, ln = line.split(' ')
-                fn = fn.replace(f'/home/tung/Tung/research/Open-Pill/FACIL/data/Pill_Base_X', folder_path)
+                fn = fn.replace(f'/home/tung/Tung/research/Open-Pill/FACIL/data/Pill_Base_X', self.data_dir)
                 #print ([fn,int(ln)])
                 dataset.append([fn,int(ln)])
                 #print(os.path.isfile(fn))

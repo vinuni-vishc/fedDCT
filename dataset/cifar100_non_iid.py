@@ -9,10 +9,10 @@ from .cifar10_non_iid import *
 np.random.seed(68)
 random.seed(68)
 
-def get_cifar100():
+def get_cifar100(datadir):
   '''Return CIFAR100 train/test data and labels as numpy arrays'''
-  data_train = torchvision.datasets.CIFAR100(HOME+'/dataset/cifar/train', train=True, download=True)
-  data_test = torchvision.datasets.CIFAR100(HOME+'/dataset/cifar/val', train=False, download=True) 
+  data_train = torchvision.datasets.CIFAR100(datadir, train=True, download=True)
+  data_test = torchvision.datasets.CIFAR100(datadir, train=False, download=True) 
   
   x_train, y_train = data_train.data.transpose((0,3,1,2)), np.array(data_train.targets)
   x_test, y_test = data_test.data.transpose((0,3,1,2)), np.array(data_test.targets)
@@ -128,9 +128,9 @@ def get_default_data_transforms_cf100(train=True, verbose=True):
 
   return (transforms_train['cifar100'], transforms_eval['cifar100'])
 
-def get_data_loaders_train_cf100(nclients,batch_size,classes_pc=10 ,verbose=True,transforms_train=None, transforms_eval=None,non_iid=None,split_factor=1):
+def get_data_loaders_train_cf100(data_dir,nclients,batch_size,classes_pc=10 ,verbose=True,transforms_train=None, transforms_eval=None,non_iid=None,split_factor=1):
   
-  x_train, y_train, _, _ = get_cifar100()
+  x_train, y_train, _, _ = get_cifar100(data_dir)
 
   if verbose:
     print_image_data_stats_train(x_train, y_train)
@@ -154,9 +154,9 @@ def get_data_loaders_train_cf100(nclients,batch_size,classes_pc=10 ,verbose=True
 
   return client_loaders
 
-def get_data_loaders_test_cf100(nclients,batch_size,classes_pc=10 ,verbose=True,transforms_train=None, transforms_eval=None,non_iid=None,split_factor=1):
+def get_data_loaders_test_cf100(data_dir,nclients,batch_size,classes_pc=10 ,verbose=True,transforms_train=None, transforms_eval=None,non_iid=None,split_factor=1):
   
-  _, _, x_test, y_test = get_cifar100()
+  _, _, x_test, y_test = get_cifar100(data_dir)
 
   if verbose:
     print_image_data_stats_test(x_test, y_test)

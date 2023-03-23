@@ -26,7 +26,7 @@ def save_hp_to_json(args):
 
 
 def add_parser_params(parser):
-    parser.add_argument('--data', type=str, metavar='DIR', default=str(data_dir)+"/dataset/cifar",
+    parser.add_argument('--data', type=str, metavar='DIR', default=str(data_dir)+"/dataset/",
 						help='path to dataset')
 	
     parser.add_argument('--model_dir', type=str, default="feddct",

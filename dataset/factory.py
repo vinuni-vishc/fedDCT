@@ -51,7 +51,8 @@ def get_data_loader(data_dir,
 			non_iid = 'quantity_skew'
 			if 'train' in split:
 				print("INFO:PyTorch: Using quantity_skew CIFAR10 dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
-				traindir = os.path.join(data_dir, 'train')
+				# traindir = os.path.join(data_dir, 'train')
+				traindir = data_dir
 				train_transform = transforms.Compose([transforms.ToPILImage(),
 														transforms.RandomCrop(32, padding=4),
 														transforms.RandomHorizontalFlip(),
@@ -69,27 +70,28 @@ def get_data_loader(data_dir,
 				
 				#print("Hey" + non_iid)
 				if is_fed:
-					train_loader = get_data_loaders_train( nclients= num_clusters*split_factor,
+					train_loader = get_data_loaders_train( traindir, nclients= num_clusters*split_factor,
 					batch_size=batch_size,verbose=True, transforms_train=train_transform,non_iid = non_iid,split_factor=split_factor)
 				else:
 					assert is_fed
 				return train_loader, train_sampler
 			else:
-				valdir = os.path.join(data_dir, 'val')
+				# valdir = os.path.join(data_dir, 'val')
+				valdir = data_dir
 				val_transform = transforms.Compose([
 					transforms.ToPILImage(),
 					transforms.ToTensor(),
 					transforms.Normalize((0.4914, 0.4822, 0.4465),
 					(0.2023, 0.1994, 0.2010)),
 					])
-				val_loader = get_data_loaders_test( nclients= num_clusters*split_factor,
+				val_loader = get_data_loaders_test(valdir, nclients= num_clusters*split_factor,
 				batch_size=batch_size,verbose=True, transforms_eval=val_transform,non_iid = non_iid,split_factor=1)
 				return val_loader 
 		else:
 			if 'train' in split:
 				print("INFO:PyTorch: Using CIFAR10 dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
-				traindir = os.path.join(data_dir, 'train')
-
+				# traindir = os.path.join(data_dir, 'train')
+				traindir = data_dir
 				train_transform = transforms.Compose([transforms.RandomCrop(32, padding=4),
 														transforms.RandomHorizontalFlip(),
 														CIFAR10Policy(),
@@ -139,7 +141,8 @@ def get_data_loader(data_dir,
 																**kwargs)
 				return train_loader, train_sampler
 			else:
-				valdir = os.path.join(data_dir, 'val')
+				# valdir = os.path.join(data_dir, 'val')
+				valdir = data_dir
 				val_transform = transforms.Compose([transforms.ToTensor(),
 													transforms.Normalize((0.4914, 0.4822, 0.4465),
 																			(0.2023, 0.1994, 0.2010)),
@@ -159,7 +162,8 @@ def get_data_loader(data_dir,
 			non_iid = 'quantity_skew'
 			if 'train' in split:
 				print("INFO:PyTorch: Using quantity_skew CIFAR100 dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
-				traindir = os.path.join(data_dir, 'train')
+				# traindir = os.path.join(data_dir, 'train')
+				# traindir = data_dir
 				train_transform = transforms.Compose([transforms.ToPILImage(),
 														transforms.RandomCrop(32, padding=4),
 														transforms.RandomHorizontalFlip(),
@@ -177,28 +181,29 @@ def get_data_loader(data_dir,
 				
 				#print("Hey" + non_iid)
 				if is_fed:
-					train_loader = get_data_loaders_train_cf100( nclients= num_clusters*split_factor,
+					train_loader = get_data_loaders_train_cf100(data_dir, nclients= num_clusters*split_factor,
 					batch_size=batch_size,verbose=True, transforms_train=train_transform,non_iid = non_iid,split_factor=split_factor)
 				else:
 					assert is_fed
 				return train_loader, train_sampler
 			else:
-				valdir = os.path.join(data_dir, 'val')
+				# valdir = os.path.join(data_dir, 'val')
+				# valdir = data_dir
 				val_transform = transforms.Compose([
 					transforms.ToPILImage(),
 					transforms.ToTensor(),
 					transforms.Normalize((0.4914, 0.4822, 0.4465),
 					(0.2023, 0.1994, 0.2010)),
 					])
-				val_loader = get_data_loaders_test_cf100( nclients= num_clusters*split_factor,
+				val_loader = get_data_loaders_test_cf100(data_dir, nclients= num_clusters*split_factor,
 				batch_size=batch_size,verbose=True, transforms_eval=val_transform,non_iid = non_iid,split_factor=1)
 				return val_loader 
 		else:
 			if 'train' in split:
 				print("INFO:PyTorch: Using CIFAR100 dataset, batch size {}"
 						" and crop size is {}.".format(batch_size, crop_size))
-				traindir = os.path.join(data_dir, 'train')
-		
+				# traindir = os.path.join(data_dir, 'train')
+				traindir = data_dir
 				train_transform = transforms.Compose([transforms.RandomCrop(32, padding=4),
 														transforms.RandomHorizontalFlip(),
 														])
@@ -248,7 +253,8 @@ def get_data_loader(data_dir,
 															**kwargs)
 				return train_loader, train_sampler
 			else:
-				valdir = os.path.join(data_dir, 'val')
+				# valdir = os.path.join(data_dir, 'val')
+				valdir = data_dir
 				val_transform = transforms.Compose([transforms.ToTensor(),
 													transforms.Normalize((0.5071, 0.4865, 0.4409),
 																			std=(0.2673, 0.2564, 0.2762)),
@@ -359,7 +365,7 @@ def get_data_loader(data_dir,
 				print('INFO:PyTorch: creating RandomErasing policies...')
 				train_transform.transforms.append(transforms.RandomErasing(p=erase_p, scale=(0.05, 0.12),
 																			ratio=(0.5, 1.5), value=0))
-			train_dataset = PillDataBase(True,transform=train_transform,split_factor=split_factor)
+			train_dataset = PillDataBase(data_dir,True,transform=train_transform,split_factor=split_factor)
 			
 			train_sampler = None
 			if is_distributed:
@@ -397,7 +403,7 @@ def get_data_loader(data_dir,
 																		std),
 											])
 			
-			val_dataset = PillDataBase(False,transform=val_transform,split_factor=1)
+			val_dataset = PillDataBase(data_dir,False,transform=val_transform,split_factor=1)
 
 			print('INFO:PyTorch: creating Pill Base validation dataloader...')
 			val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, **kwargs)
