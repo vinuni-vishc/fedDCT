@@ -411,11 +411,20 @@ def get_data_loader(data_dir,
 	elif dataset == 'ham10000':
 		mean = [0.485, 0.456, 0.406]
 		std = [0.229, 0.224, 0.225]
+		train = []
+		train_dataset=[]
+		train_loader = []
 		if 'train' in split:
 			print("INFO:PyTorch: Using ham10000 dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
-			train_file = open(HOME+'/dataset/ham10000/ham10000_train.pickle','rb')
-			train = pickle.load(train_file)
-			train_file.close
+			# train_file = open(HOME+'/dataset/ham10000/ham10000_train.pickle','rb')
+			# train = pickle.load(train_file)
+			# train_file.close
+			for client_num in range(1, 21):
+				print("load dataset for client "+ str(client_num))
+				train_file= open( HOME+'/dataset/ham10000/' + f'client{client_num}.pickle')
+				train[client_num] = pickle.load(train_file)
+				train_file.close
+			
 			train_transforms = transforms.Compose([transforms.RandomHorizontalFlip(), 
                         transforms.RandomVerticalFlip(),
 						transforms.RandomHorizontalFlip(), #new
@@ -427,26 +436,21 @@ def get_data_loader(data_dir,
                         transforms.ToTensor(), 
                         transforms.Normalize(mean = mean, std = std)
                         ])
-			
-			train_dataset = SkinData(train, transform = train_transforms,split_factor=split_factor)
+			for client_num in range(1, 21):
+				train_dataset[client_num] = SkinData(train[client_num], transform = train_transforms,split_factor=split_factor)
 			train_sampler = None
 			if is_distributed:
 				train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, shuffle=True)
 
 			print('INFO:PyTorch: creating ImageNet train dataloader...')
 			if is_fed:
-				images_per_client = int(len(train_dataset)/ num_clusters/split_factor) 
-				print("Images per client is "+ str(images_per_client))
-				data_split = [images_per_client for _ in range(num_clusters*split_factor-1)]
-				data_split.append(len(train_dataset)-images_per_client*(num_clusters*split_factor-1))
-				#print(data_split)
-				traindata_split = torch.utils.data.random_split(train_dataset,data_split,generator=torch.Generator().manual_seed(68))
-				train_loader = [torch.utils.data.DataLoader(x,
+				for client_num in range(1, 21):
+					train_loader.append(torch.utils.data.DataLoader(train_dataset[client_num],
 															batch_size=batch_size,
 															shuffle=(train_sampler is None),
 															drop_last=True,
 															sampler=train_sampler,
-															**kwargs) for x in traindata_split]
+															**kwargs))
 			else:
 				train_loader = torch.utils.data.DataLoader(train_dataset,
 															batch_size=batch_size,
