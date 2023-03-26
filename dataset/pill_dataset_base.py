@@ -9,11 +9,12 @@ from config import HOME
 
 
 class PillDataBase(Dataset):
-    def __init__(self,data_dir=HOME+'dataset/pill_base', train = True,transform = None, split_factor=1):
+    def __init__(self,train_txt ='/train.txt', data_dir=HOME+'dataset/pill_base', train = True,transform = None, split_factor=1):
         self.train = train
         self.transform = transform
         self.split_factor = split_factor
         self.data_dir = data_dir+'/pill_base'
+        self.train_txt = train_txt
         # self.dataset = self.get_data()
         self.dataset = self.get_data()
 
@@ -23,7 +24,7 @@ class PillDataBase(Dataset):
         dataset = []
         if self.train:
             #folder_path_ = folder_path+'/train'
-            txt_path = self.data_dir+ '/train.txt'
+            txt_path = self.data_dir+ self.train_txt
         
         else: 
             #folder_path_ = folder_path+'/test'

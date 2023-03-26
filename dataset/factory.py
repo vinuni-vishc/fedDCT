@@ -343,7 +343,9 @@ def get_data_loader(data_dir,
 
 	elif dataset == 'pill_base':
 		mean = [0.4550, 0.5239, 0.5653]
-		std = [0.2460, 0.2446, 0.2252]			
+		std = [0.2460, 0.2446, 0.2252]		
+		train_dataset=[]	
+		train_loader = []
 		if 'train' in split:
 			print("INFO:PyTorch: Using pill Base dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
 			train_transform = transforms.Compose([transforms.RandomResizedCrop(crop_size, scale=(0.1, 1.0),
@@ -367,7 +369,9 @@ def get_data_loader(data_dir,
 				print('INFO:PyTorch: creating RandomErasing policies...')
 				train_transform.transforms.append(transforms.RandomErasing(p=erase_p, scale=(0.05, 0.12),
 																			ratio=(0.5, 1.5), value=0))
-			train_dataset = PillDataBase(data_dir,True,transform=train_transform,split_factor=split_factor)
+			for client_num in range(1, 21):	
+				train_txt = f"train_{client_num}.txt"													
+				train_dataset.append(PillDataBase(train_txt,data_dir,True,transform=train_transform,split_factor=split_factor))
 			
 			train_sampler = None
 			if is_distributed:
@@ -375,17 +379,13 @@ def get_data_loader(data_dir,
 
 			print('INFO:PyTorch: creating Pill Base train dataloader...')
 			if is_fed:
-				images_per_client = int(len(train_dataset) / num_clusters/split_factor) 
-				print("Images per client is "+ str(images_per_client))
-				data_split = [images_per_client for _ in range(num_clusters*split_factor-1)]
-				data_split.append(len(train_dataset)-images_per_client*(num_clusters*split_factor-1))
-				traindata_split = torch.utils.data.random_split(train_dataset,data_split,generator=torch.Generator().manual_seed(68))
-				train_loader = [torch.utils.data.DataLoader(x,
+				for client_num in range(1, 21):
+					train_loader.append(torch.utils.data.DataLoader(train_dataset[client_num-1],
 															batch_size=batch_size,
 															shuffle=(train_sampler is None),
 															drop_last=True,
 															sampler=train_sampler,
-															**kwargs) for x in traindata_split]
+															**kwargs))
 				print(train_loader)
 			else:
 				train_loader = torch.utils.data.DataLoader(train_dataset,
