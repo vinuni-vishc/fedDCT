@@ -14,7 +14,9 @@ class SkinData(Dataset):
     
     def __getitem__(self, index):
         Xs=[]
+        # print(open(self.df['path'][index]))
         X = Image.open(self.df['path'][index]).resize((64, 64))
+        
         y = torch.tensor(int(self.df['target'][index]))
         if (self.test_same_view):
             #print("Testing same view of data")

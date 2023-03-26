@@ -72,6 +72,7 @@ def get_data_loader(data_dir,
 				if is_fed:
 					train_loader = get_data_loaders_train( traindir, nclients= num_clusters*split_factor,
 					batch_size=batch_size,verbose=True, transforms_train=train_transform,non_iid = non_iid,split_factor=split_factor)
+					print(train_loader)
 				else:
 					assert is_fed
 				return train_loader, train_sampler
@@ -132,6 +133,7 @@ def get_data_loader(data_dir,
 																drop_last=True,
 																sampler=train_sampler,
 																**kwargs) for x in traindata_split]
+					
 				else:
 					train_loader = torch.utils.data.DataLoader(train_dataset,
 																batch_size=batch_size,
@@ -384,6 +386,7 @@ def get_data_loader(data_dir,
 															drop_last=True,
 															sampler=train_sampler,
 															**kwargs) for x in traindata_split]
+				print(train_loader)
 			else:
 				train_loader = torch.utils.data.DataLoader(train_dataset,
 														batch_size=batch_size,
@@ -412,8 +415,8 @@ def get_data_loader(data_dir,
 		mean = [0.485, 0.456, 0.406]
 		std = [0.229, 0.224, 0.225]
 		train = [[] for _ in range(20)]
-		train_dataset=[[] for _ in range(20)]
-		train_loader = [[] for _ in range(20)]
+		train_dataset=[]
+		train_loader = []
 		if 'train' in split:
 			print("INFO:PyTorch: Using ham10000 dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
 			# train_file = open(HOME+'/dataset/ham10000/ham10000_train.pickle','rb')
@@ -443,7 +446,7 @@ def get_data_loader(data_dir,
 			train_sampler = None
 			if is_distributed:
 				train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, shuffle=True)
-
+			# print(len(train_dataset))
 			print('INFO:PyTorch: creating ImageNet train dataloader...')
 			if is_fed:
 				for client_num in range(1, 21):
@@ -453,6 +456,7 @@ def get_data_loader(data_dir,
 															drop_last=True,
 															sampler=train_sampler,
 															**kwargs))
+
 			else:
 				train_loader = torch.utils.data.DataLoader(train_dataset,
 															batch_size=batch_size,
