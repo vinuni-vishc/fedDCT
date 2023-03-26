@@ -411,9 +411,9 @@ def get_data_loader(data_dir,
 	elif dataset == 'ham10000':
 		mean = [0.485, 0.456, 0.406]
 		std = [0.229, 0.224, 0.225]
-		train = []
-		train_dataset=[]
-		train_loader = []
+		train = [[] for _ in range(20)]
+		train_dataset=[[] for _ in range(20)]
+		train_loader = [[] for _ in range(20)]
 		if 'train' in split:
 			print("INFO:PyTorch: Using ham10000 dataset, batch size {} and crop size is {}.".format(batch_size, crop_size))
 			# train_file = open(HOME+'/dataset/ham10000/ham10000_train.pickle','rb')
@@ -421,8 +421,10 @@ def get_data_loader(data_dir,
 			# train_file.close
 			for client_num in range(1, 21):
 				print("load dataset for client "+ str(client_num))
-				train_file= open( HOME+'/dataset/ham10000/' + f'client{client_num}.pickle')
-				train[client_num] = pickle.load(train_file)
+				train_file= open( HOME+'/dataset/ham10000/' + f'client{client_num}.pickle','rb')
+				
+				train[client_num - 1] = pickle.load(train_file)
+				print(train[client_num - 1])
 				train_file.close
 			
 			train_transforms = transforms.Compose([transforms.RandomHorizontalFlip(), 
@@ -437,7 +439,7 @@ def get_data_loader(data_dir,
                         transforms.Normalize(mean = mean, std = std)
                         ])
 			for client_num in range(1, 21):
-				train_dataset[client_num] = SkinData(train[client_num], transform = train_transforms,split_factor=split_factor)
+				train_dataset.append(SkinData(train[client_num-1], transform = train_transforms,split_factor=split_factor))
 			train_sampler = None
 			if is_distributed:
 				train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, shuffle=True)
@@ -445,7 +447,7 @@ def get_data_loader(data_dir,
 			print('INFO:PyTorch: creating ImageNet train dataloader...')
 			if is_fed:
 				for client_num in range(1, 21):
-					train_loader.append(torch.utils.data.DataLoader(train_dataset[client_num],
+					train_loader.append(torch.utils.data.DataLoader(train_dataset[client_num-1],
 															batch_size=batch_size,
 															shuffle=(train_sampler is None),
 															drop_last=True,
