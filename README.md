@@ -1,5 +1,8 @@
 # Federated Divide and Cotraining
-**NOTE: We are currently developing a new version which will be released soon**
+**NOTE: We are going to release a new version on Arxiv soon.**  
+
+V2: Release date 13.4.2022: Add new training script for FedGKT. 
+
 This repository contains the code and experiments for the paper: 
 
 > [FedDCT: A Novel Federated Learning Approach
@@ -22,7 +25,7 @@ We conduct extensive experiments on natural and real-world medical image dataset
 ## General Guidelines
 
 We provide this codebase which contains:
-* Training algorithms for 4 distributed collaborative machile learning algorithms: [FedAvg](https://arxiv.org/pdf/1602.05629.pdf), [FedProx](https://arxiv.org/abs/1812.06127), [SplitFed](https://arxiv.org/abs/2004.12088), our algorithm [FedDCT]() and normal centralized training.
+* Training algorithms for 4 distributed collaborative machile learning algorithms: [FedAvg](https://arxiv.org/pdf/1602.05629.pdf), [FedProx](https://arxiv.org/abs/1812.06127), [SplitFed](https://arxiv.org/abs/2004.12088),[FedGKT](https://arxiv.org/abs/2007.14513) and our algorithm [FedDCT]() and normal centralized training.
 * Training on 4 datasets : CIFAR10, CIFAR100, [HAM10000](https://www.kaggle.com/kmader/skin-cancer-mnist-ham10000) and [VAIPE](https://smarthealth.vinuni.edu.vn/resources/) dataset. To make this work reproducible and encourage new advances, we make all images and annotations of the VAIPE dataset publicly available as a part of a bigger dataset that we will release on our project [website](https://smarthealth.vinuni.edu.vn/resources/)
 * This codebase is easy to extend to other FL algorithms, models and datasets.
 * For hyperparameters, see `params/train_params.py`
@@ -52,9 +55,13 @@ OpenCV 4.5.5
 ```
 
 ## Run Experiments
-(1) Please change the parameters in `config.py` correspondingly: purposes
+![](images/accuracy.png)
+*Top-1 accuracy (%) of FedDCT compared to state-of-the-art FL methods on the test sets of CIFAR-10, CIFAR-100,
+HAM10000, and VAIPE datasets.*<br /> 
+
+(1) Please add --spid for experiment name add the end of each training script. For example
 ```
-HOME is the root folder, SPID is experiment name for logging 
+python train_fedgkt.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnet16_8 --dataset=cifar10 --num_classes=10 --is_single_branch=0 --is_amp=0 --num_rounds=300 --fed_epochs=1 --spid="fedgkt_wrn168_split1_cifar10_20clients_20choose_300rounds"
 ```
 (2) CIFAR10 Training scripts 
 ```
@@ -68,6 +75,8 @@ python train_feddct.py --is_fed=1 --fixed_cluster=0 --split_factor=4 --num_clust
 python train_fedprox.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnet16_8 --dataset=cifar10 --num_classes=10 --is_single_branch=0 --is_amp=0 --num_rounds=300 --fed_epochs=1
 #SplitFed
 python train_splitfed.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnetsl16_8 --dataset=cifar10 --num_classes=10 --is_single_branch=0 --is_amp=0 --num_rounds=300 --fed_epochs=1
+#FedGKT
+python train_fedgkt.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnet16_8 --dataset=cifar10 --num_classes=10 --is_single_branch=0 --is_amp=0 --num_rounds=300 --fed_epochs=1 --spid="fedgkt_wrn168_split1_cifar10_20clients_20choose_300rounds"
 ```
 (3) CIFAR100 Training scripts 
 ```
@@ -81,6 +90,8 @@ python train_feddct.py --is_fed=1 --fixed_cluster=0 --split_factor=4 --num_clust
 python train_fedprox.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=resnet110 --dataset=cifar100 --num_classes=100 --is_single_branch=0 --is_amp=0 --num_rounds=650 --fed_epochs=1
 #SplitFed
 python train_splitfed.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=resnet110sl --dataset=cifar100 --num_classes=100 --is_single_branch=0 --is_amp=0 --num_rounds=650 --fed_epochs=1
+#FedGKT
+python train_fedgkt.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=resnet110sl --dataset=cifar100 --num_classes=100 --is_single_branch=0 --is_amp=0 --num_rounds=650 --fed_epochs=1 --spid="fedgkt_resnet110_split1_cifar100_20clients_20choose_650rounds" 
 ```
 (3) HAM10000 Training scripts 
 ```
@@ -94,8 +105,27 @@ python train_feddct.py --is_fed=1 --fixed_cluster=0 --split_factor=4 --num_clust
 python train_fedprox.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --dataset=ham10000 --num_classes=7 --is_single_branch=0 --is_amp=0 --fed_epochs=1 --arch=wide_resnet50_2 --num_rounds=200 --crop_size=64 --lr=1e-2 --slow_start_lr=1e-3
 #SplitFed
 python train_splitfed.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnetsl50_2 --dataset=ham10000 --num_classes=7 --is_single_branch=0 --is_amp=0 --num_rounds=200 --fed_epochs=1 --lr=1e-2 --slow_start_lr=1e-3 --crop_size=64
+#FedGKT
+python train_fedgkt.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnetsl50_2 --dataset=ham10000 --num_classes=7 --is_single_branch=0 --is_amp=0 --num_rounds=200 --fed_epochs=1 --lr=1e-2 --slow_start_lr=1e-3 --crop_size=64 --spid="fedgkt_wrn502_split1_ham10000_20clients_20choose_650rounds" 
 ```
-(4) Tensorboard
+(4) VAIPE dataset
+```
+# FedAvg
+python train_fedavg.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnet50_2 --dataset=pill_base --num_classes=98 --is_single_branch=0 --is_amp=0 --num_rounds=350 --crop_size=224 --batch_size=32 --fed_epochs=1 
+# FedProx
+python train_fedprox.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnet50_2 --dataset=pill_base --num_classes=98 --is_single_branch=0 --is_amp=0 --num_rounds=350 --crop_size=224 --batch_size=32 --fed_epochs=1 
+# FedDCT
+python train_feddct.py --is_fed=1 --fixed_cluster=0 --split_factor=4 --num_clusters=5 --num_selected=5 --arch=wide_resnetsl50_2 --dataset=pill_base --num_classes=98 --is_single_branch=0 --is_amp=0 --num_rounds=350 --fed_epochs=1 --batch_size=32 --crop_size=224
+# SplitFed
+python train_splitfed.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnetsl50_2 --dataset=pill_base --num_classes=98 --is_single_branch=0 --is_amp=0 --num_rounds=350 --fed_epochs=1 --batch_size=32 --crop_size=224
+# FedGKT
+python train_fedgkt.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnetsl50_2 --dataset=pill_base --num_classes=98 --is_single_branch=0 --is_amp=0 --num_rounds=350 --fed_epochs=1 --batch_size=32 --crop_size=224 --spid="fedgkt_wrn502_split1_pill_base_20clients_20choose_350rounds"
+```
+(5) Non-iid CIFAR-10 and CIFAR-100
+```
+Please add --cifar10_non_iid="quantity_skew" for CIFAR-10 non iid and --cifar100_non_iid="quantity_skew" for non-iid CIFAR-100
+```
+(6) Tensorboard
 ```
 # You can visualize the result using tensorboard 
 tensorboard --logdir models/splitnet/

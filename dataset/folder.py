@@ -11,6 +11,7 @@ import os
 import os.path
 import torch
 
+
 def has_file_allowed_extension(filename, extensions):
     """Checks if a file is an allowed extension.
 

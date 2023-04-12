@@ -8,6 +8,7 @@ import torch
 from .vision import VisionDataset
 from .utils import check_integrity, download_and_extract_archive
 
+
 class CIFAR10(VisionDataset):
     """`CIFAR10 <https://www.cs.toronto.edu/~kriz/cifar.html>`_ Dataset.
 

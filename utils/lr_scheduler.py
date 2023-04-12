@@ -5,6 +5,7 @@ reference:
 	https://github.com/ZJULearning/RMI/blob/master/utils/train_utils.py
 	https://github.com/zhanghang1989/PyTorch-Encoding
 
+Contact: zhaoshuaimcc@gmail.com
 """
 
 from __future__ import absolute_import
@@ -187,8 +188,8 @@ def scale_lr_and_momentum(args):
 			'Original lr: {args.lr}, Original momentum: {args.momentum}')
 	if 'cifar' in args.dataset:
 		std_b_size = 128
-	elif 'imagenet' in args.dataset:
-		std_b_size = 256
+	# elif 'imagenet' in args.dataset:
+	# 	std_b_size = 256
 	else:
 		raise NotImplementedError
 

@@ -157,9 +157,8 @@ class ResNet(nn.Module):
 		# inplanes and base width of the bottleneck
 		if groups == 1:
 			self.groups = groups
-			inplanes_dict = {# 'imagenet': {1: 64, 2: 48, 4: 32, 8: 24},
-								# 'imagenet': {1: 64, 2: 40, 4: 32, 8: 24},
-								'imagenet': {1: 64, 2: 44, 4: 32, 8: 24},
+			inplanes_dict = {
+								# 'imagenet': {1: 64, 2: 44, 4: 32, 8: 24},
 								'ham10000': {1: 64, 2: 44, 4: 32, 8: 24},
 								'pill_base': {1: 64, 2: 44, 4: 32, 8: 24},
 								'pill_large': {1: 64, 2: 44, 4: 32, 8: 24},
@@ -176,7 +175,7 @@ class ResNet(nn.Module):
 				
 				elif arch in ['wide_resnet50_2', 'wide_resnet50_3', 'wide_resnet101_2']:
 					# wide_resnet50_2 and wide_resnet101_2 are for imagenet
-					assert split_factor in [1, 2, 4] and (dataset == 'imagenet' or dataset == 'ham10000' or dataset == 'pill_base' or dataset == 'pill_large')
+					# assert split_factor in [1, 2, 4] and (dataset == 'imagenet' or dataset == 'ham10000' or dataset == 'pill_base' or dataset == 'pill_large')
 					
 					# The below is the same as max(widen_factor / (split_factor ** 0.5) + 0.4, 1.0)
 					if arch == 'wide_resnet50_2' and split_factor == 2:
@@ -214,7 +213,7 @@ class ResNet(nn.Module):
 			raise ValueError("replace_stride_with_dilation should be None "
 								"or a 3-element tuple, got {}".format(replace_stride_with_dilation))
 
-		if dataset == 'imagenet' or dataset == 'ham10000' or dataset == 'pill_base' or dataset == 'pill_large':
+		if dataset == 'ham10000' or dataset == 'pill_base' or dataset == 'pill_large':
 			self.layer0 = nn.Sequential(
 							nn.Conv2d(3, self.inplanes, kernel_size=3, stride=2, padding=1, bias=False),
 							norm_layer(self.inplanes),
@@ -234,7 +233,7 @@ class ResNet(nn.Module):
 			strides = [1, 2, 2, 2]
 			# n_channels = [64, 128, 256, 512]
 		
-		elif dataset in ['cifar10', 'cifar100', 'svhn']:
+		elif dataset in ['cifar10', 'cifar100']:
 			# for training cifar, change the kernel_size=7 -> kernel_size=3 with stride=1
 			self.layer0 = nn.Sequential(
 							# nn.Conv2d(3, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False),
@@ -270,8 +269,8 @@ class ResNet(nn.Module):
 		# If dataset is cifar, do not use layer4 because the size of the feature map is too small.
 		# The original paper of resnet set total stride=8 with less channels.
 		self.layer4 = None
-		if ('imagenet' in dataset or 'ham10000' in dataset or 'pill_base' in dataset or 'pill_large' in dataset):
-			print('INFO:PyTorch: Using layer4 for ImageNet Training')
+		if ('ham10000' in dataset or 'pill_base' in dataset or 'pill_large' in dataset):
+			print('INFO:PyTorch: Using layer4 for ham or pill Training')
 			self.layer4 = self._make_layer(block, inplanes_origin * 8, layers[3], stride=strides[3],
 													dilate=replace_stride_with_dilation[2])
 			inplanes_now = inplanes_origin * 8

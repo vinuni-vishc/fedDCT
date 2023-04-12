@@ -5,14 +5,14 @@ import random
 import torch
 from torchvision import transforms
 from torch.utils.data import DataLoader, Dataset
-from config import *
+from config import HOME
 np.random.seed(68)
 random.seed(68)
 
-def get_cifar10():
+def get_cifar10(data_dir):
   '''Return CIFAR10 train/test data and labels as numpy arrays'''
-  data_train = torchvision.datasets.CIFAR10(HOME+'/splitnet/dataset/cifar/train', train=True, download=True)
-  data_test = torchvision.datasets.CIFAR10(HOME+'/splitnet/dataset/cifar/val', train=False, download=True) 
+  data_train = torchvision.datasets.CIFAR10(data_dir, train=True, download=True)
+  data_test = torchvision.datasets.CIFAR10(data_dir, train=False, download=True) 
   
   x_train, y_train = data_train.data.transpose((0,3,1,2)), np.array(data_train.targets)
   x_test, y_test = data_test.data.transpose((0,3,1,2)), np.array(data_test.targets)
@@ -278,9 +278,9 @@ def get_default_data_transforms(train=True, verbose=True):
 
   return (transforms_train['cifar10'], transforms_eval['cifar10'])
 
-def get_data_loaders_train(nclients,batch_size,classes_pc=10 ,verbose=True,transforms_train=None, transforms_eval=None,non_iid=None,split_factor=1):
+def get_data_loaders_train(data_dir, nclients,batch_size,classes_pc=10 ,verbose=True,transforms_train=None, transforms_eval=None,non_iid=None,split_factor=1):
   
-  x_train, y_train, _, _ = get_cifar10()
+  x_train, y_train, _, _ = get_cifar10(data_dir)
 
   if verbose:
     print_image_data_stats_train(x_train, y_train)
@@ -291,7 +291,7 @@ def get_data_loaders_train(nclients,batch_size,classes_pc=10 ,verbose=True,trans
   print('Non diid is '+ str(non_iid))
   if non_iid == 'quantity_skew':
     split = split_image_data_realwd(x_train, y_train, 
-          n_clients=20, verbose=verbose)
+          n_clients=nclients, verbose=verbose)
   elif non_iid == 'label_skew':
     split = split_image_data(x_train, y_train, n_clients=nclients, 
           classes_per_client=classes_pc, verbose=verbose)
@@ -304,9 +304,9 @@ def get_data_loaders_train(nclients,batch_size,classes_pc=10 ,verbose=True,trans
 
   return client_loaders
 
-def get_data_loaders_test(nclients,batch_size,classes_pc=10 ,verbose=True,transforms_train=None, transforms_eval=None,non_iid=None,split_factor=1):
+def get_data_loaders_test(data_dir,nclients,batch_size,classes_pc=10 ,verbose=True,transforms_train=None, transforms_eval=None,non_iid=None,split_factor=1):
   
-  _, _, x_test, y_test = get_cifar10()
+  _, _, x_test, y_test = get_cifar10(data_dir)
 
   if verbose:
     print_image_data_stats_test(x_test, y_test)

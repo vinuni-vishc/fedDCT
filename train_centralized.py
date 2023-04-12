@@ -14,13 +14,14 @@ from torch.backends import cudnn
 from tensorboardX import SummaryWriter
 from config import *
 from params import train_params
-from utils import label_smoothing, norm, summary, metric, lr_scheduler, prefetch
+from utils import label_smoothing, norm, summary, metric, lr_scheduler, rmsprop_tf, prefetch
 from model import splitnet
 from utils.thop import profile, clever_format
 from dataset import factory
-os.environ["CUDA_VISIBLE_DEVICES"]= GPU_ID
+from params.train_params import save_hp_to_json
 # global best accuracy
 best_acc1 = 0
+
 
 def main(args):
     if args.gpu is not None:
@@ -49,9 +50,11 @@ def main(args):
         args.gpu = 0
         main_worker(args.gpu, ngpus_per_node, args)
 
+
 def main_worker(gpu, ngpus_per_node, args):
     global best_acc1
     args.gpu = gpu
+    args.model_dir = str(HOME)+"/models/splitnet/"+str(args.spid)
     if args.is_distributed:
         print("INFO:PyTorch: Initialize process group for distributed training")
         if args.dist_url == "env://" and args.rank == -1:
@@ -94,11 +97,13 @@ def main_worker(gpu, ngpus_per_node, args):
                               criterion=criterion)
     print("INFO:PyTorch: The number of parameters in the model is {}".format(
         metric.get_the_number_of_params(model)))
-
+    if not args.is_summary and not args.evaluate:
+        save_hp_to_json(args)
     if args.is_summary:
         print(model)
-        
+    
         return None
+    
     summary.save_model_to_json(args, model)
     if args.is_distributed:
         if args.world_size > 1 and args.is_syncbn:
@@ -148,7 +153,7 @@ def main_worker(gpu, ngpus_per_node, args):
     if args.is_wd_all:
         print(
             "INFO:PyTorch: Applying weight decay to all learnable parameters in the model.")
-    
+
     if args.optimizer == 'SGD':
         print("INFO:PyTorch: using SGD optimizer.")
         optimizer = torch.optim.SGD(param_groups,
@@ -171,6 +176,16 @@ def main_worker(gpu, ngpus_per_node, args):
                                         alpha=0.9,
                                         weight_decay=args.weight_decay,
                                         momentum=0.9)
+
+    elif args.optimizer == "RMSpropTF":
+        # https://github.com/rwightman/pytorch-image-models/blob/fcb6258877/timm/optim/rmsprop_tf.py
+        print("INFO:PyTorch: using RMSpropTF optimizer.")
+        optimizer = rmsprop_tf.RMSpropTF(param_groups, lr=args.lr,
+                                         alpha=0.9,
+                                         eps=0.001,
+                                         weight_decay=args.weight_decay,
+                                         momentum=0.9,
+                                         decoupled_decay=False)
     else:
         raise NotImplementedError
 
@@ -230,7 +245,8 @@ def main_worker(gpu, ngpus_per_node, args):
                                                           num_workers=args.workers,
 														  is_fed=args.is_fed,
 														  num_clusters=args.num_clusters,
-                                                          cifar10_non_iid = args.cifar10_non_iid)
+                                                          cifar10_non_iid = args.cifar10_non_iid,
+                                                          cifar100_non_iid=args.cifar100_non_iid)
 
     val_loader = factory.get_data_loader(args.data,
                                          batch_size=args.eval_batch_size,
@@ -238,7 +254,8 @@ def main_worker(gpu, ngpus_per_node, args):
                                          dataset=args.dataset,
                                          split="val",
                                          num_workers=args.workers,
-                                         cifar10_non_iid = args.cifar10_non_iid)
+                                         cifar10_non_iid = args.cifar10_non_iid,
+                                         cifar100_non_iid=args.cifar100_non_iid)
 
     # learning rate scheduler
     scheduler = lr_scheduler.lr_scheduler(mode=args.lr_mode,
@@ -286,10 +303,6 @@ def main_worker(gpu, ngpus_per_node, args):
                 # summary per epoch
                 val_writer.add_scalar(
                     'test_acc', acc_all[0], global_step=epoch)
-                if args.dataset == 'imagenet':
-                    val_writer.add_scalar(
-                        'avg_acc5', acc_all[1], global_step=epoch)
-
                 for i in range(1, args.loop_factor + 1):
                     val_writer.add_scalar('{}_acc1'.format(
                         i - 1), acc_all[i+1], global_step=epoch)
@@ -298,46 +311,30 @@ def main_worker(gpu, ngpus_per_node, args):
                     'learning_rate', optimizer.param_groups[0]['lr'], global_step=epoch)
                 val_writer.add_scalar(
                     'best_acc1', best_acc1, global_step=epoch)
+                if(args.save_weight):
 
-                # save checkpoints
-                filename = "checkpoint_{0}.pth.tar".format(epoch)
-                saved_ckpt_filenames.append(filename)
-                # remove the oldest file if the number of saved ckpts is greater than args.max_ckpt_nums
-                if len(saved_ckpt_filenames) > args.max_ckpt_nums:
-                    os.remove(os.path.join(args.model_dir,
-                                           saved_ckpt_filenames.pop(0)))
+                    # save checkpoints
+                    filename = "checkpoint_{0}.pth.tar".format(epoch)
+                    saved_ckpt_filenames.append(filename)
+                    # remove the oldest file if the number of saved ckpts is greater than args.max_ckpt_nums
+                    if len(saved_ckpt_filenames) > args.max_ckpt_nums:
+                        os.remove(os.path.join(args.model_dir,
+                                            saved_ckpt_filenames.pop(0)))
 
-                ckpt_dict = {
-                    'epoch': epoch + 1,
-                    'arch': args.arch,
-                    'state_dict': model.state_dict(),
-                    'best_acc1': best_acc1,
-                    'optimizer': optimizer.state_dict(),
-                }
-                # ckpt_dict_model = {
-                #     'epoch': epoch + 1,
-                #     'arch': args.arch,
-                #     'state_dict': model.state_dict(),
-                #     'best_acc1': best_acc1,
-                # }
+                    ckpt_dict = {
+                        'epoch': epoch + 1,
+                        'arch': args.arch,
+                        'state_dict': model.state_dict(),
+                        'best_acc1': best_acc1,
+                        'optimizer': optimizer.state_dict(),
+                    }
 
-                # ckpt_dict_optim = {
-                #     'epoch': epoch + 1,
-                #     'arch': args.arch,
-                #     'state_dict': optimizer.state_dict(),
-                #     'best_acc1': best_acc1,
-                # }
+                    if args.is_amp:
+                        ckpt_dict['scaler'] = scaler.state_dict()
 
+                    metric.save_checkpoint(
+                        ckpt_dict, is_best, args.model_dir, filename=filename)
 
-                if args.is_amp:
-                    ckpt_dict['scaler'] = scaler.state_dict()
-
-                metric.save_checkpoint(
-                    ckpt_dict, is_best, args.model_dir, filename=filename)
-                # metric.save_checkpoint(
-                #     ckpt_dict_model, is_best, args.model_dir, filename="model.pth.tar")
-                # metric.save_checkpoint(
-                #     ckpt_dict_optim, is_best, args.model_dir, filename="optim.pth.tar")
     # clean GPU cache
     torch.cuda.empty_cache()
     sys.exit(0)
@@ -356,8 +353,7 @@ def train(val_writer,train_loader, model, optimizer, scheduler, epoch, args, str
         # ce_losses_l.append(metric.AverageMeter('{}_CE_Loss'.format(i), ':.4e'))
         top1_all.append(metric.AverageMeter('{}_Acc@1'.format(i), ':6.2f'))
     avg_top1 = metric.AverageMeter('Avg_Acc@1', ':6.2f')
-    # if args.dataset == 'imagenet':
-    #	avg_top5 = metric.AverageMeter('Avg_Acc@1', ':6.2f')
+
 
     # show all
     total_iters = len(train_loader)
@@ -532,7 +528,7 @@ def validate(val_loader, model, args, streams=None):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='PyTorch ImageNet Testing')
+    parser = argparse.ArgumentParser(description='Centralzed Training')
     args = train_params.add_parser_params(parser)
     assert args.is_fed == 0, "For centralized learning, args.if_fed must be false"
     os.makedirs(args.model_dir, exist_ok=True)
