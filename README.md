@@ -125,7 +125,7 @@ python train_fedgkt.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clust
 ```
 Please add --cifar10_non_iid="quantity_skew" for CIFAR-10 non iid and --cifar100_non_iid="quantity_skew" for non-iid CIFAR-100
 ```
-(4) Tensorboard
+(6) Tensorboard
 ```
 # You can visualize the result using tensorboard 
 tensorboard --logdir models/splitnet/
