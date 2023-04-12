@@ -1,6 +1,8 @@
 # Federated Divide and Cotraining
-**NOTE: We are going to release a new version on Arxiv soon.**
-V2: Release date 13.4.2022: Add new training script for FedGKT.
+**NOTE: We are going to release a new version on Arxiv soon.**  
+
+V2: Release date 13.4.2022: Add new training script for FedGKT. 
+
 This repository contains the code and experiments for the paper: 
 
 > [FedDCT: A Novel Federated Learning Approach
@@ -55,7 +57,8 @@ OpenCV 4.5.5
 ## Run Experiments
 ![](images/accuracy.png)
 *Top-1 accuracy (%) of FedDCT compared to state-of-the-art FL methods on the test sets of CIFAR-10, CIFAR-100,
-HAM10000, and VAIPE datasets.*
+HAM10000, and VAIPE datasets.*<br /> 
+
 (1) Please add param for experiment name add the end of each training script. For example
 ```
 python train_fedgkt.py --is_fed=1 --fixed_cluster=0 --split_factor=1 --num_clusters=20 --num_selected=20 --arch=wide_resnet16_8 --dataset=cifar10 --num_classes=10 --is_single_branch=0 --is_amp=0 --num_rounds=300 --fed_epochs=1 --spid="fedgkt_wrn168_split1_cifar10_20clients_20choose_300rounds"
