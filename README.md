@@ -1,7 +1,7 @@
 # Federated Divide and Cotraining
 **NOTE: We are going to release a new version on Arxiv soon.**  
 
-V2: Release date 13.4.2022: Add new training script for FedGKT. 
+V2: Release date 13.4.2022: Add new training script for FedGKT. If there is any problem with the code, please clone dev branch
 
 This repository contains the code and experiments for the paper: 
 
