@@ -25,7 +25,7 @@ We conduct extensive experiments on natural and real-world medical image dataset
 ## General Guidelines
 
 We provide this codebase which contains:
-* Training algorithms for 4 distributed collaborative machile learning algorithms: [FedAvg](https://arxiv.org/pdf/1602.05629.pdf), [FedProx](https://arxiv.org/abs/1812.06127), [SplitFed](https://arxiv.org/abs/2004.12088),[FedGKT](https://arxiv.org/abs/2007.14513) and our algorithm [FedDCT]() and normal centralized training.
+* Training algorithms for 5 distributed collaborative machile learning algorithms: [FedAvg](https://arxiv.org/pdf/1602.05629.pdf), [FedProx](https://arxiv.org/abs/1812.06127), [SplitFed](https://arxiv.org/abs/2004.12088),[FedGKT](https://arxiv.org/abs/2007.14513), our algorithm [FedDCT]() and normal centralized training.
 * Training on 4 datasets : CIFAR10, CIFAR100, [HAM10000](https://www.kaggle.com/kmader/skin-cancer-mnist-ham10000) and [VAIPE](https://smarthealth.vinuni.edu.vn/resources/) dataset. To make this work reproducible and encourage new advances, we make all images and annotations of the VAIPE dataset publicly available as a part of a bigger dataset that we will release on our project [website](https://smarthealth.vinuni.edu.vn/resources/)
 * This codebase is easy to extend to other FL algorithms, models and datasets.
 * For hyperparameters, see `params/train_params.py`
