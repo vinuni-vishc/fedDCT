@@ -1,5 +1,5 @@
 # Federated Divide and Cotraining
-**NOTE: We are going to release a new version on Arxiv soon.**  
+**Update 16.8.2023: Our paper just has been accepted for publication in IEEE Transactions on Network and Service Management (Q1- IF 5.3).** For the camera-ready version with comparision with FedGKT, please see https://drive.google.com/file/d/1dgBRH5DPKe7rvMHfYd2x-woVtyyo0yfI/view?usp=sharing  
 
 V2: Release date 13.4.2022: Add new training script for FedGKT. If there is any problem with the code, please clone dev branch
 
