@@ -7,9 +7,7 @@ V2: Release date 13.4.2022: Add new training script for FedGKT. If there is any 
 
 This repository contains the code and experiments for the paper: 
 
-> [FedDCT: A Novel Federated Learning Approach
-for Training Large Convolutional Neural Networks
-on Resource-constrained Devices](https://arxiv.org/abs/2211.10948)
+> [FedDCT: Federated Learning of Large Convolutional Neural Networks on Resource Constrained Devices using Divide and Collaborative Training](https://arxiv.org/abs/2211.10948)
 >
 > submitted to [ IEEE Transactions on Network and Service Management]([https://signalprocessingsociety.org/publications-resources/ieee-journal-selected-topics-signal-processing](https://www.comsoc.org/publications/journals/ieee-tnsm)) .
 > Arxiv link: https://arxiv.org/abs/2211.10948
